@@ -1,6 +1,6 @@
 # Architecture
 
-Complete architecture documentation for the Modern Next.js Boilerplate.
+Complete architecture documentation for unerr Web Landing.
 
 ---
 

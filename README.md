@@ -1,6 +1,6 @@
-# Modern Next.js Boilerplate
+# unerr Web Landing
 
-Production-ready Next.js starter for building full-stack SaaS applications. Includes authentication, multi-tenancy, AI agents, billing, analytics, and more.
+Landing page for the unerr platform -- code intelligence for AI coding agents. Built with Next.js 16, React 19, and Tailwind CSS v4.
 
 ---
 
@@ -55,7 +55,7 @@ corepack enable
 
 # 2. Clone and install dependencies
 git clone <your-repo-url>
-cd nextjs_fullstack_boilerplate
+cd unerr-web-landing
 pnpm install
 
 # 3. Configure environment
@@ -595,4 +595,4 @@ MIT
 
 ---
 
-**Modern Next.js Boilerplate** - Built for rapid development.
+**unerr Web Landing** - Code intelligence for AI coding agents.

@@ -26,7 +26,7 @@ function getResendClient(): Resend | null {
 
 // Email sender configuration
 const getEmailFrom = () =>
-  process.env.EMAIL_FROM || "AppealGen AI <noreply@appealgen.ai>"
+  process.env.EMAIL_FROM || "unerr <noreply@unerr.dev>"
 
 // Build auth config - conditionally include database adapter
 const authConfig: Parameters<typeof betterAuth>[0] = {
@@ -39,7 +39,7 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
   } : {}),
 
   // App configuration
-  appName: "AppealGen AI",
+  appName: "unerr",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production-min-32-chars",
 
@@ -82,7 +82,7 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
                       <td align="center">
                         <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                           <tr>
-                            <td style="background: linear-gradient(135deg, #559EFF 0%, #0065BA 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
+                            <td style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
                               <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Organization Invitation</h1>
                             </td>
                           </tr>
@@ -95,7 +95,7 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
                               <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                   <td align="center" style="padding: 16px 0;">
-                                    <a href="${inviteLink}" style="display: inline-block; background-color: #568AFF; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                                    <a href="${inviteLink}" style="display: inline-block; background-color: #8B5CF6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
                                       Accept Invitation
                                     </a>
                                   </td>
@@ -146,7 +146,7 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
         await resend.emails.send({
           from: getEmailFrom(),
           to: user.email,
-          subject: "Verify your AppealGen AI account",
+          subject: "Verify your unerr account",
           html: `
             <!DOCTYPE html>
             <html>
@@ -162,9 +162,8 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
                       <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         <!-- Header -->
                         <tr>
-                          <td style="background: linear-gradient(135deg, #559EFF 0%, #0065BA 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">AppealGen AI</h1>
-                            <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">by 10XR</p>
+                          <td style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">unerr</h1>
                           </td>
                         </tr>
                         <!-- Content -->
@@ -175,12 +174,12 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
                               Hi ${user.name || "there"},
                             </p>
                             <p style="color: #52525b; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
-                              Thanks for signing up for AppealGen AI! Please verify your email address by clicking the button below.
+                              Thanks for signing up for unerr! Please verify your email address by clicking the button below.
                             </p>
                             <table width="100%" cellpadding="0" cellspacing="0">
                               <tr>
                                 <td align="center" style="padding: 16px 0;">
-                                  <a href="${url}" style="display: inline-block; background-color: #568AFF; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                                  <a href="${url}" style="display: inline-block; background-color: #8B5CF6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
                                     Verify Email Address
                                   </a>
                                 </td>
@@ -198,10 +197,10 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
                         <tr>
                           <td style="padding: 24px 32px; border-top: 1px solid #e4e4e7; text-align: center;">
                             <p style="color: #a1a1aa; margin: 0; font-size: 12px;">
-                              &copy; ${new Date().getFullYear()} 10XR. All rights reserved.
+                              &copy; ${new Date().getFullYear()} unerr Inc. All rights reserved.
                             </p>
                             <p style="color: #a1a1aa; margin: 8px 0 0 0; font-size: 12px;">
-                              <a href="https://10xr.co" style="color: #568AFF; text-decoration: none;">10xr.co</a>
+                              <a href="https://unerr.dev" style="color: #8B5CF6; text-decoration: none;">unerr.dev</a>
                             </p>
                           </td>
                         </tr>
