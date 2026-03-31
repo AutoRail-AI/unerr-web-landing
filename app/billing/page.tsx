@@ -2,10 +2,8 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { SubscriptionCard } from "@/components/billing/subscription-card"
 import { Button } from "@/components/ui/button"
-import { ContentBlock, ContentBlockDescription, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
+import { ContentBlock, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
 import { auth } from "@/lib/auth"
-import { connectDB } from "@/lib/db/mongoose"
-import { Subscription } from "@/lib/models/billing"
 
 export default async function BillingPage() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -13,14 +11,12 @@ export default async function BillingPage() {
     redirect("/login")
   }
 
-  await connectDB()
-
-  // Get user's subscription
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const subscription = await (Subscription as any).findOne({
-    userId: session.user.id,
-    status: "active",
-  })
+  // TODO: Fetch subscription from Supabase via Prisma once schema is set up
+  const subscription = null as {
+    planId: string
+    status: string
+    currentPeriodEnd: string
+  } | null
 
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
@@ -58,4 +54,3 @@ export default async function BillingPage() {
     </div>
   )
 }
-

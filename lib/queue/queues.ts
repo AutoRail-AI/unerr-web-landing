@@ -41,6 +41,7 @@ export function getEmailQueue(): Queue<EmailJobData> {
     // Don't specify generics in constructor - let TypeScript infer to avoid type conflicts
     // Use type assertion for connection to handle ioredis version compatibility
     emailQueue = new Queue(QUEUE_NAMES.EMAIL, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
       connection: getRedis() as any,
       ...defaultQueueOptions,
     }) as Queue<EmailJobData>
@@ -58,6 +59,7 @@ export function getProcessingQueue(): Queue<ProcessingJobData> {
     // Don't specify generics in constructor - let TypeScript infer to avoid type conflicts
     // Use type assertion for connection to handle ioredis version compatibility
     processingQueue = new Queue(QUEUE_NAMES.PROCESSING, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
       connection: getRedis() as any,
       ...defaultQueueOptions,
     }) as Queue<ProcessingJobData>
@@ -75,6 +77,7 @@ export function getWebhooksQueue(): Queue<WebhookJobData> {
     // Don't specify generics in constructor - let TypeScript infer to avoid type conflicts
     // Use type assertion for connection to handle ioredis version compatibility
     webhooksQueue = new Queue(QUEUE_NAMES.WEBHOOKS, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
       connection: getRedis() as any,
       ...defaultQueueOptions,
       defaultJobOptions: {

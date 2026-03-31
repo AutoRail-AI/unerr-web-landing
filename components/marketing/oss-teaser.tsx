@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { BorderBeam } from "@/components/ui/magic/border-beam"
 
 const staggerContainer: Variants = {
@@ -25,6 +25,7 @@ const staggerChild: Variants = {
 
 export function OssTeaser() {
   const prefersReducedMotion = useReducedMotion()
+  const { open: openWaitlist } = useWaitlist()
   return (
     <section className="relative overflow-hidden px-6 py-28">
       <motion.div
@@ -54,13 +55,14 @@ export function OssTeaser() {
           deserve a tech lead, not another AI bot.
         </motion.p>
         <motion.div variants={staggerChild}>
-          <Link
-            href="/oss"
+          <button
+            type="button"
+            onClick={() => openWaitlist("oss")}
             className="mt-6 inline-flex items-center gap-1.5 font-medium text-accent transition-colors hover:text-accent/80"
           >
             Protect Your Project
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </button>
         </motion.div>
       </motion.div>
 

@@ -113,6 +113,7 @@ export function startWorkers(): void {
   // Email worker
   // Use type assertion for connection to handle ioredis version compatibility
   const emailWorker = new Worker(QUEUE_NAMES.EMAIL, processEmailJob, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
     connection: createRedisConnection() as any,
     concurrency: 5,
   })
@@ -124,6 +125,7 @@ export function startWorkers(): void {
     QUEUE_NAMES.PROCESSING,
     processProcessingJob,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
       connection: createRedisConnection() as any,
       concurrency: 3, // Lower concurrency for heavy tasks
     }
@@ -133,6 +135,7 @@ export function startWorkers(): void {
   // Webhooks worker
   // Use type assertion for connection to handle ioredis version compatibility
   const webhooksWorker = new Worker(QUEUE_NAMES.WEBHOOKS, processWebhookJob, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis v5 type incompatibility with BullMQ
     connection: createRedisConnection() as any,
     concurrency: 10,
   })

@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Section } from "@/components/ui/section"
 import { Spinner } from "@/components/ui/spinner"
-import type { OnboardingStep } from "@/lib/onboarding/flow"
+
+export type OnboardingStep = "welcome" | "profile" | "organization" | "preferences" | "complete"
 
 const steps: { key: OnboardingStep; title: string; description: string }[] = [
   { key: "welcome", title: "Welcome", description: "Get started with your account" },
@@ -162,4 +163,3 @@ export function OnboardingFlow({
     </div>
   )
 }
-

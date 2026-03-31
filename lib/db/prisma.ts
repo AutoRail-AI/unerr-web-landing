@@ -21,7 +21,7 @@ try {
     })
 
   if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prismaInstance
-} catch (_error) {
+} catch {
   // Prisma client not generated yet - this is expected during initial setup
   // Better Auth CLI will generate the schema, then we can generate the client
   if (process.env.NODE_ENV !== "test") {

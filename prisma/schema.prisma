@@ -1,29 +1,22 @@
-// This is your Prisma schema file for Better Auth
-// Learn more: https://pris.ly/d/prisma-schema
+// Prisma schema for unerr Web Landing
+// Uses the "landing" PostgreSQL schema to avoid conflicts with the main app
+// sharing the same Supabase database.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
-}
-
-// Minimal placeholder model to allow Prisma client generation
-// Better Auth will replace this with actual models when you run:
-// npx @better-auth/cli@latest generate
-
-model Placeholder {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  @@map("placeholder")
+  provider = "postgresql"
+  url      = env("SUPABASE_DB_URL")
+  schemas  = ["landing"]
 }
 
 model User {
-  id            String       @id @map("_id")
+  id            String       @id @default(cuid())
   name          String
-  email         String
+  email         String       @unique
   emailVerified Boolean      @default(false)
   image         String?
   createdAt     DateTime     @default(now())
@@ -34,14 +27,14 @@ model User {
   members       Member[]
   invitations   Invitation[]
 
-  @@unique([email])
   @@map("user")
+  @@schema("landing")
 }
 
 model Session {
-  id                   String   @id @map("_id")
+  id                   String   @id @default(cuid())
   expiresAt            DateTime
-  token                String
+  token                String   @unique
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   ipAddress            String?
@@ -50,13 +43,13 @@ model Session {
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeOrganizationId String?
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
+  @@schema("landing")
 }
 
 model Account {
-  id                    String    @id @map("_id")
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -73,10 +66,11 @@ model Account {
 
   @@index([userId])
   @@map("account")
+  @@schema("landing")
 }
 
 model Verification {
-  id         String   @id @map("_id")
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -85,24 +79,25 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+  @@schema("landing")
 }
 
 model Organization {
-  id          String       @id @map("_id")
+  id          String       @id @default(cuid())
   name        String
-  slug        String
+  slug        String       @unique
   logo        String?
   createdAt   DateTime
   metadata    String?
   members     Member[]
   invitations Invitation[]
 
-  @@unique([slug])
   @@map("organization")
+  @@schema("landing")
 }
 
 model Member {
-  id             String       @id @map("_id")
+  id             String       @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId         String
@@ -113,10 +108,25 @@ model Member {
   @@index([organizationId])
   @@index([userId])
   @@map("member")
+  @@schema("landing")
+}
+
+model Waitlist {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  linkedin        String?
+  plan            String   @default("general") // "general" | "oss"
+  githubUrl       String?  // GitHub repo or org URL (OSS only)
+  maintainerProof String?  // Link proving maintainer status (OSS only)
+  createdAt       DateTime @default(now())
+
+  @@map("waitlist")
+  @@schema("landing")
 }
 
 model Invitation {
-  id             String       @id @map("_id")
+  id             String       @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
@@ -130,4 +140,5 @@ model Invitation {
   @@index([organizationId])
   @@index([email])
   @@map("invitation")
+  @@schema("landing")
 }

@@ -1,16 +1,13 @@
 import { headers } from "next/headers"
-import { ContentBlock, ContentBlockDescription, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
+import { ContentBlock, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
 import { Metric, MetricGrid } from "@/components/ui/metric"
-import { getAuditLogs } from "@/lib/audit/logger"
 import { auth } from "@/lib/auth"
-import { connectDB } from "@/lib/db/mongoose"
 import { prisma } from "@/lib/db/prisma"
 
 export default async function AdminDashboard() {
   await auth.api.getSession({ headers: await headers() })
-  await connectDB()
 
-  // Get stats
+  // Get stats from Prisma
   const userCount = await prisma.user.count()
   let orgCount = 0
   try {
@@ -19,13 +16,6 @@ export default async function AdminDashboard() {
   } catch {
     // Organization model might not exist yet
   }
-
-  const { Subscription } = await import("@/lib/models/billing")
-  const subscriptionCount = await Subscription.countDocuments({
-    status: "active",
-  })
-
-  const recentActivity = await getAuditLogs({ limit: 10 })
 
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
@@ -45,32 +35,16 @@ export default async function AdminDashboard() {
           value={orgCount}
           description="Total organizations"
         />
-        <Metric
-          label="Active Subscriptions"
-          value={subscriptionCount}
-          description="Currently active subscriptions"
-        />
       </MetricGrid>
 
       <ContentBlock>
         <ContentBlockHeader>
           <ContentBlockTitle>Recent Activity</ContentBlockTitle>
-          <ContentBlockDescription>Latest audit log entries</ContentBlockDescription>
         </ContentBlockHeader>
-        <div className="space-y-2">
-          {recentActivity.map((log) => (
-            <div key={log._id.toString()} className="flex justify-between text-sm">
-              <span className="text-foreground">
-                {log.action} {log.resource}
-              </span>
-              <span className="text-muted-foreground">
-                {new Date(log.createdAt).toLocaleString()}
-              </span>
-            </div>
-          ))}
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Activity logging will be available once connected to Supabase.
+        </p>
       </ContentBlock>
     </div>
   )
 }
-

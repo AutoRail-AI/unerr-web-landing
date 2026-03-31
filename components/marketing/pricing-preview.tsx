@@ -4,6 +4,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { ArrowRight, Check, Github } from "lucide-react"
 import Link from "next/link"
 import { ShimmerButton } from "@/components/marketing/shimmer-button"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { BorderBeam } from "@/components/ui/magic/border-beam"
 
 const proFeatures = [
@@ -44,6 +45,7 @@ const staggerChild: Variants = {
 
 export function PricingPreview() {
   const prefersReducedMotion = useReducedMotion()
+  const { open: openWaitlist } = useWaitlist()
   return (
     <section className="relative overflow-hidden px-6 py-24">
       <div
@@ -117,13 +119,14 @@ export function PricingPreview() {
               ))}
             </div>
 
-            <Link
-              href="/oss"
+            <button
+              type="button"
+              onClick={() => openWaitlist("oss")}
               className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent/80"
             >
               Protect Your Project
               <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            </button>
           </motion.div>
 
           {/* Pro Card */}
@@ -158,7 +161,7 @@ export function PricingPreview() {
             </div>
 
             <ShimmerButton
-              href="/login"
+              onClick={() => openWaitlist("general")}
               className="mt-8 flex h-10 w-full justify-center"
             >
               Get Started Free &mdash; 7 day trial

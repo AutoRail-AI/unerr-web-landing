@@ -30,11 +30,11 @@ const getEmailFrom = () =>
 
 // Build auth config - conditionally include database adapter
 const authConfig: Parameters<typeof betterAuth>[0] = {
-  // Database adapter - Using Prisma with MongoDB
+  // Database adapter - Using Prisma with PostgreSQL (Supabase)
   // Only include if prisma is available (after client generation)
   ...(prisma ? {
     database: prismaAdapter(prisma, {
-      provider: "mongodb",
+      provider: "postgresql",
     }),
   } : {}),
 

@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server"
-import { connectDB } from "@/lib/db/mongoose"
 import { prisma } from "@/lib/db/prisma"
 import { successResponse } from "@/lib/utils/api-response"
 
 export async function GET() {
   try {
-    // Check database connections
-    await connectDB()
+    // Check Prisma/database connection
     await prisma.$connect()
 
     // Check Redis (if available)
@@ -31,7 +29,7 @@ export async function GET() {
       },
       "Service is healthy"
     )
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         success: false,

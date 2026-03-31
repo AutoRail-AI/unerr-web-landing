@@ -21,8 +21,6 @@
     "e2e:headless": "playwright test",
     "e2e:ui": "playwright test --ui",
     "worker": "npx tsx scripts/worker.ts",
-    "seed": "tsx scripts/seed.ts",
-    "migrate": "tsx scripts/migrate.ts",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "postinstall": "npx patch-package -y",
     "coupling-graph": "npx madge --extensions js,jsx,ts,tsx,css,md,mdx ./ --exclude '.next|tailwind.config.js|reset.d.ts|prettier.config.js|postcss.config.js|playwright.config.ts|next.config.js|next-env.d.ts|instrumentation.ts|e2e/|README.md|.storybook/|.eslintrc.js' --image graph.svg"
@@ -72,8 +70,6 @@
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.562.0",
-    "mongodb": "^7.0.0",
-    "mongoose": "^8.8.0",
     "next": "^16.0.10",
     "next-themes": "^0.4.6",
     "openai": "^4.68.0",

@@ -1,8 +1,8 @@
 "use client"
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
-import Link from "next/link"
 import { ShimmerButton } from "@/components/marketing/shimmer-button"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { AnimatedGridPattern } from "@/components/ui/magic/animated-grid"
 
 const fadeUp: Variants = {
@@ -18,6 +18,7 @@ const proofPoints = [
 
 export function FinalCta() {
   const prefersReducedMotion = useReducedMotion()
+  const { open: openWaitlist } = useWaitlist()
   return (
     <section className="relative overflow-hidden px-6 py-24">
       <AnimatedGridPattern
@@ -67,16 +68,17 @@ export function FinalCta() {
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <ShimmerButton href="/login">
+          <ShimmerButton onClick={() => openWaitlist("general")}>
             Get Started Free
           </ShimmerButton>
-          <Link
-            href="/oss"
+          <button
+            type="button"
+            onClick={() => openWaitlist("oss")}
             className="inline-flex h-11 items-center gap-1.5 rounded-full border border-border px-6 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Protect an OSS Project
             <span aria-hidden="true">&rarr;</span>
-          </Link>
+          </button>
         </div>
 
         <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">

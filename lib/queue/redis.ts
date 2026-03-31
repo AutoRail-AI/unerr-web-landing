@@ -84,10 +84,9 @@ export async function closeRedis(): Promise<void> {
   if (redisInstance) {
     try {
       await redisInstance.quit()
-    } catch (error: unknown) {
+    } catch {
       // Ignore errors during shutdown
       // This can happen if connection was never established
-      // Type assertion to handle unknown error type
     }
     redisInstance = null
   }

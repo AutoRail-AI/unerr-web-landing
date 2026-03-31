@@ -1,6 +1,7 @@
 "use client"
 
 import { type ReactNode, useEffect } from "react"
+import { WaitlistProvider } from "@/components/marketing/waitlist-dialog"
 
 /* ─── Force Dark Theme for Marketing ─────────────────────────────────────
    Marketing pages are always dark (Substrate Dark aesthetic).
@@ -53,10 +54,10 @@ function PostHogInit() {
 /* ─── Marketing Providers Wrapper ───────────────────────────────────────── */
 export function MarketingProviders({ children }: { children: ReactNode }) {
   return (
-    <>
+    <WaitlistProvider>
       <ForceMarketingTheme />
       <PostHogInit />
       {children}
-    </>
+    </WaitlistProvider>
   )
 }

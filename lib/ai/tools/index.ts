@@ -1,43 +1,4 @@
-import mongoose from "mongoose"
-import { connectDB } from "@/lib/db/mongodb"
 import type { AgentTool } from "../types"
-
-export const databaseTool: AgentTool = {
-  name: "query_database",
-  description: "Query the database for information. Use this to search for users, organizations, or other data.",
-  parameters: {
-    type: "object",
-    properties: {
-      collection: {
-        type: "string",
-        description: "The collection name (e.g., 'user', 'organization')",
-      },
-      query: {
-        type: "object",
-        description: "MongoDB query object (as JSON string)",
-      },
-      limit: {
-        type: "number",
-        description: "Maximum number of results (default: 10)",
-      },
-    },
-    required: ["collection", "query"],
-  },
-  handler: async ({ collection, query, limit = 10 }) => {
-    try {
-      await connectDB()
-      const queryObj = typeof query === "string" ? JSON.parse(query) : query
-      const coll = mongoose.connection.collection(collection)
-      const results = await coll.find(queryObj).limit(limit).toArray()
-      return { success: true, results, count: results.length }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
-    }
-  },
-}
 
 export const emailTool: AgentTool = {
   name: "send_email",
@@ -64,7 +25,7 @@ export const emailTool: AgentTool = {
     try {
       const { Resend } = await import("resend")
       const resend = new Resend(process.env.RESEND_API_KEY)
-      
+
       if (!process.env.RESEND_API_KEY) {
         return { success: false, error: "Resend API key not configured" }
       }
@@ -75,9 +36,9 @@ export const emailTool: AgentTool = {
         subject,
         html: body,
       })
-      
+
       return { success: true, messageId: result.data?.id }
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -104,28 +65,13 @@ export const webSearchTool: AgentTool = {
     required: ["query"],
   },
   handler: async ({ query: _query, maxResults: _maxResults = 5 }) => {
-    // Placeholder implementation
-    // In production, integrate with a search API like Tavily, Serper, or Google Custom Search
     try {
-      // Example: You could use Tavily API
-      // const response = await fetch("https://api.tavily.com/search", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     api_key: process.env.TAVILY_API_KEY,
-      //     query,
-      //     max_results: maxResults,
-      //   }),
-      // })
-      // const data = await response.json()
-      // return { success: true, results: data.results }
-      
       return {
         success: true,
         message: "Web search not configured. Please set up a search API (Tavily, Serper, etc.)",
         results: [],
       }
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -135,5 +81,4 @@ export const webSearchTool: AgentTool = {
 }
 
 // Export all tools
-export const defaultTools = [databaseTool, emailTool, webSearchTool]
-
+export const defaultTools = [emailTool, webSearchTool]

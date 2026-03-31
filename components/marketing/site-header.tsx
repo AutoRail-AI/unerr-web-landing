@@ -5,6 +5,7 @@ import { ExternalLink, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const navItems: Array<{ label: string; href: string; external?: boolean }> = [
@@ -17,6 +18,7 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
+  const { open: openWaitlist } = useWaitlist()
 
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 20))
 
@@ -43,12 +45,13 @@ export function SiteHeader() {
               {item.external && <ExternalLink className="h-3 w-3" />}
             </Link>
           ))}
-          <Link
-            href="/login"
+          <button
+            type="button"
+            onClick={() => openWaitlist()}
             className="inline-flex h-8 items-center rounded-full bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-90"
           >
             Get Started
-          </Link>
+          </button>
         </div>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -104,13 +107,16 @@ export function SiteHeader() {
                     transition={{ delay: navItems.length * 0.05, ease: [0.22, 1, 0.36, 1], duration: 0.3 }}
                     className="mt-4"
                   >
-                    <Link
-                      href="/login"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex h-10 items-center justify-center rounded-lg bg-foreground text-sm font-medium text-background transition-opacity hover:opacity-90"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false)
+                        openWaitlist()
+                      }}
+                      className="flex h-10 w-full items-center justify-center rounded-lg bg-foreground text-sm font-medium text-background transition-opacity hover:opacity-90"
                     >
                       Get Started
-                    </Link>
+                    </button>
                   </motion.div>
                 </div>
               </SheetContent>

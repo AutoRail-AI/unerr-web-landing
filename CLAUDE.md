@@ -23,7 +23,6 @@ pnpm test:watch             # Watch mode
 pnpm test:coverage          # With coverage
 pnpm e2e:headless           # Playwright E2E tests
 pnpm worker                 # Start BullMQ workers
-pnpm seed                   # Seed database
 pnpm storybook              # Start Storybook on port 6006
 docker compose up           # Start app + worker + redis
 ```
@@ -58,9 +57,9 @@ All marketing components use Framer Motion + GSAP for animations. They respect `
 ### Magic UI Components (`components/ui/magic/`)
 Reusable animated components: `border-beam`, `magic-card`, `number-ticker`, `animated-grid`, `dot-pattern`, `ripple`, `spotlight`.
 
-### Dual Database Pattern
-- **Prisma** (`lib/db/prisma.ts`): Used exclusively by Better Auth for auth tables.
-- **Mongoose** (`lib/db/mongoose.ts`): Used for all application data. Models in `lib/models/`.
+### Database
+- **Prisma** (`lib/db/prisma.ts`): Used by Better Auth for auth. Connects to Supabase PostgreSQL.
+- No MongoDB/Mongoose — all application data goes through Supabase via Prisma.
 
 ### Auth Flow
 - Better Auth configured in `lib/auth/`. Protected routes in `proxy.ts`.
@@ -90,30 +89,7 @@ Components use co-located files: `ComponentName.tsx`, `ComponentName.test.tsx`, 
 ### 1. Next.js 16 Middleware
 Always use `proxy.ts`, never `middleware.ts`. Next.js 16 deprecated `middleware.ts`.
 
-### 2. Mongoose Model Operations
-Always use `(Model as any).method()` for all Mongoose operations.
-```typescript
-// ❌ WRONG
-const user = await User.findOne({ email })
-
-// ✅ CORRECT
-const user = await (User as any).findOne({ email })
-```
-Applies to: `create()`, `find()`, `findOne()`, `findById()`, `findOneAndUpdate()`, `findByIdAndUpdate()`, `countDocuments()`, `deleteOne()`, `deleteMany()`, `updateOne()`, `updateMany()`
-
-### 3. Mongoose Document Property Conflicts
-Use `Omit<mongoose.Document, "conflictingProperty">` when interface properties conflict with Document.
-```typescript
-// ✅ CORRECT
-export interface ICost extends Omit<mongoose.Document, "model"> {
-  model: string
-}
-```
-
-### 4. Mongoose Duplicate Index Warnings
-Use only one indexing method — either `index: true` in schema OR `Schema.index()`, never both.
-
-### 5. Zod v4 Validation
+### 2. Zod v4 Validation
 No `.url()` or `.email()` on strings — use `.refine()` instead. Use `z.record(z.string(), z.any())` not `z.record(z.any())`.
 ```typescript
 // ❌ WRONG
@@ -126,13 +102,13 @@ link: z.string().refine(
 ).optional()
 ```
 
-### 6. JSON Parsing
+### 3. JSON Parsing
 Always type-assert `await request.json()` and `await response.json()`.
 ```typescript
 const body = (await request.json()) as { messages?: AgentMessage[]; task?: string }
 ```
 
-### 7. Error Handling in Catch Blocks
+### 4. Error Handling in Catch Blocks
 Type errors as `unknown` and check type before accessing properties.
 ```typescript
 catch (error: unknown) {
@@ -140,26 +116,26 @@ catch (error: unknown) {
 }
 ```
 
-### 8. JSX in TypeScript Files
+### 5. JSX in TypeScript Files
 Always use `.tsx` extension for files containing JSX, never `.ts`.
 
-### 9. Better Auth Import Paths
+### 6. Better Auth Import Paths
 Client plugins from `better-auth/client/plugins`, not `better-auth/react/plugins`.
 
-### 10. Better Auth Secret During Build
+### 7. Better Auth Secret During Build
 Provide fallback secret so builds succeed without env vars:
 ```typescript
 secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production-min-32-chars",
 ```
 
-### 11. NextRequest IP Address
+### 8. NextRequest IP Address
 Extract from headers, never use `req.ip` (doesn't exist in Next.js 16).
 ```typescript
 const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ||
            req.headers.get("x-real-ip") || "anonymous"
 ```
 
-### 12. Lazy Initialization
+### 9. Lazy Initialization
 Third-party clients (Stripe, Redis, etc.) must not initialize at module load time. Use null singleton + getter function + Proxy export pattern.
 ```typescript
 let stripeInstance: Stripe | null = null
@@ -174,25 +150,25 @@ export const stripe = new Proxy({} as Stripe, {
 })
 ```
 
-### 13. Stripe API Version
+### 10. Stripe API Version
 Always use `"2025-02-24.acacia"`.
 
-### 14. Reduce Function Type Annotations
+### 11. Reduce Function Type Annotations
 Always type reduce callback parameters explicitly.
 ```typescript
 const total = items.reduce((sum: number, item: any) => sum + item.value, 0)
 ```
 
-### 15. BullMQ Queue Types
+### 12. BullMQ Queue Types
 Use `as any` type assertions for Redis connection params in Queue/Worker constructors.
 
-### 16. Missing Type Declarations
+### 13. Missing Type Declarations
 Create `.d.ts` files for libraries without TypeScript types.
 
-### 17. Design Tokens
+### 14. Design Tokens
 Never use raw hex colors. Use semantic tokens: `bg-background`, `text-foreground`, `text-accent`, etc.
 
-### 18. Marketing Animations
+### 15. Marketing Animations
 Always respect `prefers-reduced-motion` via Framer Motion's `useReducedMotion()` or `window.matchMedia("(prefers-reduced-motion: reduce)")`.
 
 ## Documentation

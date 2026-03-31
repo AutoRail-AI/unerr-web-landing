@@ -47,13 +47,13 @@ jobs:
       - name: Run tests
         run: pnpm test
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
 
       - name: Run E2E tests
         run: pnpm e2e:headless
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
 
   build:
@@ -80,6 +80,6 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
 
