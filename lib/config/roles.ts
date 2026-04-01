@@ -24,7 +24,7 @@ export function loadRoleConfig(): RoleConfig {
   if (cachedConfig) return cachedConfig
 
   const configPath = path.join(process.cwd(), "config", "roles.yaml")
-  
+
   try {
     const fileContents = fs.readFileSync(configPath, "utf8")
     const config = yaml.load(fileContents) as RoleConfig
@@ -50,11 +50,7 @@ export function getAllRoles(): Record<string, Role> {
   return config.roles
 }
 
-export function hasPermission(
-  roleName: string,
-  resource: string,
-  action: string
-): boolean {
+export function hasPermission(roleName: string, resource: string, action: string): boolean {
   const role = getRole(roleName)
   if (!role) return false
 
@@ -80,4 +76,3 @@ export function reloadRoleConfig(): void {
   cachedConfig = null
   loadRoleConfig()
 }
-

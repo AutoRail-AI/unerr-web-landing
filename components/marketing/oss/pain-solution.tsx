@@ -1,12 +1,7 @@
 "use client"
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
-import {
-  AlertTriangle,
-  FileWarning,
-  GitPullRequest,
-  ShieldAlert,
-} from "lucide-react"
+import { AlertTriangle, FileWarning, GitPullRequest, ShieldAlert } from "lucide-react"
 
 const pairs = [
   {
@@ -61,8 +56,7 @@ export function PainSolution() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.04), transparent 60%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.04), transparent 60%)",
         }}
         aria-hidden="true"
       />
@@ -75,17 +69,13 @@ export function PainSolution() {
           viewport={{ once: true, margin: "-100px" }}
           variants={prefersReducedMotion ? undefined : fadeUp}
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-            How unerr helps
-          </p>
-          <h2 className="mt-3 max-w-lg font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
+          <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">How unerr helps</p>
+          <h2 className="font-grotesk text-lit mt-3 max-w-lg text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
             The architectural immune system
             <br className="hidden sm:block" />
             your project has been missing.
           </h2>
-          <p className="mt-3 max-w-md text-sm text-muted-foreground">
-            Real maintainer pain. Engineered solutions.
-          </p>
+          <p className="text-muted-foreground mt-3 max-w-md text-sm">Real maintainer pain. Engineered solutions.</p>
         </motion.div>
 
         {/* Pain/Solution cards — 2-col on desktop */}
@@ -102,28 +92,22 @@ export function PainSolution() {
               <motion.div
                 key={i}
                 variants={staggerChild}
-                className="rounded-xl border border-border bg-card p-6 transition-all duration-200 hover:border-accent/15"
+                className="border-border bg-card hover:border-accent/15 rounded-xl border p-6 transition-all duration-200"
               >
                 <div className="flex items-start gap-4">
-                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10">
-                    <Icon className="h-5 w-5 text-destructive/70" />
+                  <div className="bg-destructive/10 mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                    <Icon className="text-destructive/70 h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-destructive/50">
+                    <p className="text-destructive/50 text-[10px] font-semibold tracking-[0.12em] uppercase">
                       The Pain
                     </p>
-                    <p className="mt-1 text-sm font-semibold leading-snug text-foreground">
-                      &ldquo;{pair.pain}&rdquo;
-                    </p>
+                    <p className="text-foreground mt-1 text-sm leading-snug font-semibold">&ldquo;{pair.pain}&rdquo;</p>
                   </div>
                 </div>
-                <div className="mt-4 border-t border-border/50 pt-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/50">
-                    The Fix
-                  </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                    {pair.solution}
-                  </p>
+                <div className="border-border/50 mt-4 border-t pt-4">
+                  <p className="text-accent/50 text-[10px] font-semibold tracking-[0.12em] uppercase">The Fix</p>
+                  <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">{pair.solution}</p>
                 </div>
               </motion.div>
             )

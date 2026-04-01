@@ -19,13 +19,7 @@ const steps: { key: OnboardingStep; title: string; description: string }[] = [
   { key: "preferences", title: "Preferences", description: "Set your preferences" },
 ]
 
-export function OnboardingFlow({
-  initialStep,
-  userId: _userId,
-}: {
-  initialStep: OnboardingStep
-  userId: string
-}) {
+export function OnboardingFlow({ initialStep, userId: _userId }: { initialStep: OnboardingStep; userId: string }) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(initialStep)
   const [loading, setLoading] = useState(false)
@@ -71,12 +65,10 @@ export function OnboardingFlow({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       <div className="space-y-0.5">
         <h1 className="text-lg font-semibold">Welcome! Let's get started</h1>
-        <p className="mt-0.5 text-sm text-foreground">
-          Complete these steps to set up your account
-        </p>
+        <p className="text-foreground mt-0.5 text-sm">Complete these steps to set up your account</p>
       </div>
 
       <Progress value={progress} className="h-2" />
@@ -85,19 +77,21 @@ export function OnboardingFlow({
         <Section>
           <div className="space-y-0.5">
             <h2 className="text-sm font-semibold">{steps[currentStepIndex]?.title}</h2>
-            <p className="text-xs text-foreground">{steps[currentStepIndex]?.description}</p>
+            <p className="text-foreground text-xs">{steps[currentStepIndex]?.description}</p>
           </div>
 
           {currentStep === "welcome" && (
             <div className="space-y-4">
-              <p className="text-sm text-foreground">Welcome to the platform! Let's set up your account.</p>
+              <p className="text-foreground text-sm">Welcome to the platform! Let's set up your account.</p>
             </div>
           )}
 
           {currentStep === "profile" && (
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-xs text-muted-foreground">Full Name</Label>
+                <Label htmlFor="name" className="text-muted-foreground text-xs">
+                  Full Name
+                </Label>
                 <Input
                   id="name"
                   value={formData.name || ""}
@@ -111,7 +105,9 @@ export function OnboardingFlow({
 
           {currentStep === "organization" && (
             <div className="space-y-4">
-              <p className="text-sm text-foreground">Would you like to create an organization or join an existing one?</p>
+              <p className="text-foreground text-sm">
+                Would you like to create an organization or join an existing one?
+              </p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -139,7 +135,7 @@ export function OnboardingFlow({
 
           {currentStep === "preferences" && (
             <div className="space-y-4">
-              <p className="text-sm text-foreground">Set your preferences to personalize your experience.</p>
+              <p className="text-foreground text-sm">Set your preferences to personalize your experience.</p>
             </div>
           )}
 
@@ -153,8 +149,10 @@ export function OnboardingFlow({
                   <Spinner className="mr-2 h-3.5 w-3.5" />
                   {currentStepIndex === steps.length - 1 ? "Completing..." : "Loading..."}
                 </>
+              ) : currentStepIndex === steps.length - 1 ? (
+                "Complete"
               ) : (
-                currentStepIndex === steps.length - 1 ? "Complete" : "Next"
+                "Next"
               )}
             </Button>
           </div>

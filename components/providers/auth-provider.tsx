@@ -14,11 +14,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, isPending, error } = useSession()
 
-  return (
-    <AuthContext.Provider value={{ session, isPending, error }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={{ session, isPending, error }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

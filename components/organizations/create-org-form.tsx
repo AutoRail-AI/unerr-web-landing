@@ -51,7 +51,7 @@ export function CreateOrgForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       <div className="space-y-2">
         <Label htmlFor="name">Organization Name</Label>
         <Input
@@ -75,7 +75,7 @@ export function CreateOrgForm() {
           disabled={loading}
           pattern="[a-z0-9-]+"
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           URL-friendly identifier (lowercase letters, numbers, and hyphens only)
         </p>
       </div>
@@ -93,4 +93,3 @@ export function CreateOrgForm() {
     </form>
   )
 }
-

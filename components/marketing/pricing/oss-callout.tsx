@@ -18,8 +18,7 @@ export function OssCallout() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
         }}
         aria-hidden="true"
       />
@@ -30,36 +29,35 @@ export function OssCallout() {
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
           variants={prefersReducedMotion ? undefined : fadeUp}
-          className="relative overflow-hidden rounded-2xl border border-accent/15 bg-card p-8 md:p-10"
+          className="border-accent/15 bg-card relative overflow-hidden rounded-2xl border p-8 md:p-10"
           style={{
-            backgroundImage:
-              "linear-gradient(135deg, rgba(139,92,246,0.06) 0%, transparent 50%)",
+            backgroundImage: "linear-gradient(135deg, rgba(139,92,246,0.06) 0%, transparent 50%)",
           }}
         >
           <BorderBeam duration={14} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />
 
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-start gap-5">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10">
-                <Shield className="h-6 w-6 text-accent" />
+              <div className="bg-accent/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
+                <Shield className="text-accent h-6 w-6" />
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
+                <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">
                   OSS Guardian Program
                 </p>
-                <h3 className="mt-2 font-grotesk text-xl font-bold tracking-[-0.02em] text-foreground sm:text-2xl">
+                <h3 className="font-grotesk text-foreground mt-2 text-xl font-bold tracking-[-0.02em] sm:text-2xl">
                   Open source? Free forever.
                 </h3>
-                <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-                  Any public GitHub repository gets full Pro features at no cost.
-                  No application form. No star count. No time limit.
+                <p className="text-muted-foreground mt-2 max-w-lg text-sm leading-relaxed">
+                  Any public GitHub repository gets full Pro features at no cost. No application form. No star count. No
+                  time limit.
                 </p>
               </div>
             </div>
 
             <Link
               href="/oss"
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-accent/20 bg-accent/5 px-5 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-accent/10"
+              className="border-accent/20 bg-accent/5 text-accent hover:bg-accent/10 inline-flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
             >
               Learn about OSS Guardian
               <ArrowRight className="h-3.5 w-3.5" />

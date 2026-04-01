@@ -8,7 +8,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const prismaModule = require("@prisma/client")
   PrismaClient = prismaModule.PrismaClient
-  
+
   const globalForPrisma = globalThis as unknown as {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     prisma: any | undefined
@@ -31,4 +31,3 @@ try {
 }
 
 export const prisma = prismaInstance
-

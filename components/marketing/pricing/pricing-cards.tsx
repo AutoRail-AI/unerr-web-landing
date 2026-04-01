@@ -4,6 +4,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Check } from "lucide-react"
 import Link from "next/link"
+import posthog from "posthog-js"
 import { useEffect, useRef, useState } from "react"
 import { BorderBeam } from "@/components/ui/magic/border-beam"
 
@@ -125,13 +126,12 @@ export function PricingCards() {
   }
 
   return (
-    <section className="relative overflow-hidden px-6 pb-20 pt-28 lg:pb-28 lg:pt-36">
+    <section className="relative overflow-hidden px-6 pt-28 pb-20 lg:pt-36 lg:pb-28">
       {/* Layer 1 — faint dot grid (matches landing page hero) */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           opacity: 0.025,
         }}
@@ -164,26 +164,27 @@ export function PricingCards() {
         {/* Left-aligned header */}
         <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="text-center lg:text-left">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-              Pricing
-            </p>
-            <h1 className="mt-3 font-grotesk text-3xl font-bold tracking-[-0.02em] text-lit sm:text-4xl md:text-5xl">
+            <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Pricing</p>
+            <h1 className="font-grotesk text-lit mt-3 text-3xl font-bold tracking-[-0.02em] sm:text-4xl md:text-5xl">
               Infrastructure-tier pricing
             </h1>
-            <p className="mt-4 max-w-lg text-base text-muted-foreground md:text-lg">
+            <p className="text-muted-foreground mt-4 max-w-lg text-base md:text-lg">
               Start free. Scale with your team. Open source is always free.
             </p>
           </div>
 
           {/* Billing toggle — right-aligned on desktop */}
-          <div className="inline-flex items-center gap-3 rounded-full border border-border-strong bg-muted/30 p-1">
+          <div className="border-border-strong bg-muted/30 inline-flex items-center gap-3 rounded-full border p-1">
             <button
               type="button"
               aria-pressed={!annual}
-              onClick={() => setAnnual(false)}
+              onClick={() => {
+                setAnnual(false)
+                posthog.capture("pricing_billing_cycle_changed", { cycle: "monthly" })
+              }}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 !annual
-                  ? "bg-background text-foreground shadow-sm border border-border-strong"
+                  ? "bg-background text-foreground border-border-strong border shadow-sm"
                   : "text-muted-foreground hover:text-foreground border border-transparent"
               }`}
             >
@@ -192,15 +193,18 @@ export function PricingCards() {
             <button
               type="button"
               aria-pressed={annual}
-              onClick={() => setAnnual(true)}
+              onClick={() => {
+                setAnnual(true)
+                posthog.capture("pricing_billing_cycle_changed", { cycle: "annual" })
+              }}
               className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 annual
-                  ? "bg-background text-foreground shadow-sm border border-border-strong"
+                  ? "bg-background text-foreground border-border-strong border shadow-sm"
                   : "text-muted-foreground hover:text-foreground border border-transparent"
               }`}
             >
               Annual
-              <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success">
+              <span className="bg-success/10 text-success rounded-full px-2 py-0.5 text-[10px] font-semibold">
                 Save 20%
               </span>
             </button>
@@ -213,15 +217,11 @@ export function PricingCards() {
             <div
               key={tier.name}
               className={`pricing-card relative flex flex-col overflow-hidden rounded-2xl border p-6 text-left ${
-                tier.highlighted
-                  ? "border-accent shadow-glow-accent"
-                  : "border-border-strong bg-card"
+                tier.highlighted ? "border-accent shadow-glow-accent" : "border-border-strong bg-card"
               }`}
             >
               {/* BorderBeam on highlighted card */}
-              {tier.highlighted && (
-                <BorderBeam duration={13} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />
-              )}
+              {tier.highlighted && <BorderBeam duration={13} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />}
               <div className="flex items-center justify-between">
                 <h3
                   className={`font-grotesk text-base font-semibold ${
@@ -232,30 +232,26 @@ export function PricingCards() {
                 </h3>
                 {/* "Most Popular" badge */}
                 {tier.highlighted && (
-                  <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-[10px] font-medium text-accent">
+                  <span className="bg-accent/10 text-accent rounded-full px-2.5 py-0.5 text-[10px] font-medium">
                     Most Popular
                   </span>
                 )}
               </div>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {tier.tagline}
-              </p>
+              <p className="text-muted-foreground mt-0.5 text-xs">{tier.tagline}</p>
 
               <div className="mt-4">
-                <span className="font-grotesk text-3xl font-bold text-foreground">
+                <span className="font-grotesk text-foreground text-3xl font-bold">
                   {formatPrice(tier.monthlyPrice)}
                 </span>
-                <span className="ml-1 text-sm text-muted-foreground">
-                  {priceSuffix(tier.monthlyPrice)}
-                </span>
+                <span className="text-muted-foreground ml-1 text-sm">{priceSuffix(tier.monthlyPrice)}</span>
               </div>
 
               {/* Features */}
               <div className="mt-6 flex-1 space-y-2.5">
                 {tier.features.map((f) => (
                   <div key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
-                    <span className="text-sm text-muted-foreground">{f}</span>
+                    <Check className="text-success mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span className="text-muted-foreground text-sm">{f}</span>
                   </div>
                 ))}
               </div>
@@ -263,10 +259,17 @@ export function PricingCards() {
               {/* CTA */}
               <Link
                 href={tier.cta.href}
+                onClick={() =>
+                  posthog.capture("pricing_cta_clicked", {
+                    tier: tier.name,
+                    cta_label: tier.cta.label,
+                    billing_cycle: annual ? "annual" : "monthly",
+                  })
+                }
                 className={`mt-6 flex h-9 items-center justify-center rounded-lg text-sm font-medium transition-opacity ${
                   tier.highlighted
                     ? "bg-accent-fade text-primary-foreground hover:opacity-90"
-                    : "border border-border-strong text-foreground hover:bg-muted"
+                    : "border-border-strong text-foreground hover:bg-muted border"
                 }`}
               >
                 {tier.cta.label}

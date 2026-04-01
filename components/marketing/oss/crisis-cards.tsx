@@ -7,29 +7,25 @@ const crises = [
     project: "curl",
     year: "2024",
     event: "Shut down AI bug bounties",
-    quote:
-      "AI-generated vulnerability reports were wasting maintainer time with hallucinated CVEs.",
+    quote: "AI-generated vulnerability reports were wasting maintainer time with hallucinated CVEs.",
   },
   {
     project: "Ghostty",
     year: "2025",
     event: "Banned AI-generated PRs",
-    quote:
-      "Contributors submitting AI-generated code that broke builds and ignored project conventions.",
+    quote: "Contributors submitting AI-generated code that broke builds and ignored project conventions.",
   },
   {
     project: "tldraw",
     year: "2025",
     event: "Auto-closes all bot PRs",
-    quote:
-      "Flood of low-quality PRs that passed linting but violated architectural patterns.",
+    quote: "Flood of low-quality PRs that passed linting but violated architectural patterns.",
   },
   {
     project: "Godot",
     year: "2025",
     event: "Restricted external contributions",
-    quote:
-      "Maintainers spending more time reviewing AI slop than writing code.",
+    quote: "Maintainers spending more time reviewing AI slop than writing code.",
   },
 ]
 
@@ -59,8 +55,7 @@ export function CrisisCards() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.03), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.03), transparent 65%)",
         }}
         aria-hidden="true"
       />
@@ -74,10 +69,8 @@ export function CrisisCards() {
           variants={prefersReducedMotion ? undefined : fadeUp}
           className="mb-12"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-destructive/50">
-            The Crisis
-          </p>
-          <h2 className="mt-3 max-w-lg font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
+          <p className="text-destructive/50 text-[10px] font-semibold tracking-[0.12em] uppercase">The Crisis</p>
+          <h2 className="font-grotesk text-lit mt-3 max-w-lg text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
             These projects didn&apos;t reject AI.
             <br className="hidden sm:block" />
             They rejected <span className="text-destructive/70">unsupervised</span> AI.
@@ -96,22 +89,16 @@ export function CrisisCards() {
             <motion.div
               key={c.project}
               variants={staggerChild}
-              className="rounded-xl border border-destructive/10 bg-card p-6 transition-all duration-200 hover:border-destructive/25 hover:shadow-[0_4px_24px_-4px_rgba(239,68,68,0.06)]"
+              className="border-destructive/10 bg-card hover:border-destructive/25 rounded-xl border p-6 transition-all duration-200 hover:shadow-[0_4px_24px_-4px_rgba(239,68,68,0.06)]"
             >
               <div className="flex items-baseline justify-between">
-                <h3 className="font-grotesk text-base font-semibold text-foreground">
-                  {c.project}
-                </h3>
-                <span className="font-mono text-[10px] text-muted-foreground/30">
-                  {c.year}
-                </span>
+                <h3 className="font-grotesk text-foreground text-base font-semibold">{c.project}</h3>
+                <span className="text-muted-foreground/30 font-mono text-[10px]">{c.year}</span>
               </div>
-              <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-destructive/70">
+              <p className="text-destructive/70 mt-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase">
                 {c.event}
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {c.quote}
-              </p>
+              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">{c.quote}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -122,12 +109,11 @@ export function CrisisCards() {
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
           variants={prefersReducedMotion ? undefined : fadeUp}
-          className="mt-14 max-w-2xl text-sm italic leading-relaxed text-muted-foreground"
+          className="text-muted-foreground mt-14 max-w-2xl text-sm leading-relaxed italic"
         >
-          &ldquo;AI co-authored code contains 1.7&times; more major issues,
-          75% more misconfigurations, and 2.74&times; higher security
-          vulnerabilities.&rdquo;
-          <span className="mt-2 block text-[11px] font-medium not-italic uppercase tracking-[0.08em] text-muted-foreground/40">
+          &ldquo;AI co-authored code contains 1.7&times; more major issues, 75% more misconfigurations, and 2.74&times;
+          higher security vulnerabilities.&rdquo;
+          <span className="text-muted-foreground/40 mt-2 block text-[11px] font-medium tracking-[0.08em] uppercase not-italic">
             Analysis of 470 open-source GitHub PRs
           </span>
         </motion.blockquote>

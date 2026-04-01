@@ -36,18 +36,21 @@ export const createNotificationSchema = z.object({
   type: z.enum(["info", "success", "warning", "error", "invitation", "mention", "system"]),
   title: z.string().min(1).max(200),
   message: z.string().min(1, "Message is required").max(1000, "Message too long"),
-  link: z.string().refine(
-    (val) => {
-      if (!val) return true
-      try {
-        new URL(val)
-        return true
-      } catch {
-        return false
-      }
-    },
-    { message: "Invalid URL format" }
-  ).optional(),
+  link: z
+    .string()
+    .refine(
+      (val) => {
+        if (!val) return true
+        try {
+          new URL(val)
+          return true
+        } catch {
+          return false
+        }
+      },
+      { message: "Invalid URL format" }
+    )
+    .optional(),
   metadata: z.record(z.string(), z.any()).optional(),
   sendEmail: z.boolean().optional(),
 })
@@ -105,4 +108,3 @@ export async function validateRequest<T>(
     throw error
   }
 }
-

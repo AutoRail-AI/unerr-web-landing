@@ -42,26 +42,21 @@ export function OssFinalCta() {
         variants={prefersReducedMotion ? undefined : fadeUp}
         className="relative z-10 mx-auto max-w-2xl text-center"
       >
-        <h2 className="font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl md:text-4xl">
+        <h2 className="font-grotesk text-lit text-2xl font-bold tracking-[-0.02em] sm:text-3xl md:text-4xl">
           Your project deserves an
           <br />
           architectural <span className="text-gradient">immune system</span>.
         </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Protect it — for free, forever.
-        </p>
+        <p className="text-muted-foreground mt-4 text-lg">Protect it — for free, forever.</p>
 
         {/* Proof strip echo */}
         <div className="mx-auto mt-8 flex max-w-xs items-center justify-center">
           {proofPoints.map((p, i) => (
-            <div
-              key={p.label}
-              className={`flex-1 text-center ${i > 0 ? "border-l border-border/15" : ""}`}
-            >
-              <div className="font-grotesk text-lg font-bold tabular-nums tracking-tight text-foreground">
+            <div key={p.label} className={`flex-1 text-center ${i > 0 ? "border-border/15 border-l" : ""}`}>
+              <div className="font-grotesk text-foreground text-lg font-bold tracking-tight tabular-nums">
                 {p.value}
               </div>
-              <div className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+              <div className="text-muted-foreground mt-0.5 text-[10px] font-medium tracking-[0.08em] uppercase">
                 {p.label}
               </div>
             </div>
@@ -69,12 +64,10 @@ export function OssFinalCta() {
         </div>
 
         <div className="mt-8">
-          <ShimmerButton href="/login">
-            Protect Your Project
-          </ShimmerButton>
+          <ShimmerButton href="/login">Protect Your Project</ShimmerButton>
         </div>
 
-        <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+        <p className="text-muted-foreground/60 mt-6 text-[11px] font-medium tracking-[0.08em] uppercase">
           Public GitHub repo &middot; No credit card &middot; Setup in 60 seconds
         </p>
       </motion.div>

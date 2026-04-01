@@ -12,23 +12,13 @@ interface DotPatternProps {
   className?: string
 }
 
-export function DotPattern({
-  width = 16,
-  height = 16,
-  cx = 1,
-  cy = 1,
-  cr = 1,
-  className,
-}: DotPatternProps) {
+export function DotPattern({ width = 16, height = 16, cx = 1, cy = 1, cr = 1, className }: DotPatternProps) {
   const id = useId()
 
   return (
     <svg
       aria-hidden="true"
-      className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-muted-foreground/20",
-        className,
-      )}
+      className={cn("fill-muted-foreground/20 pointer-events-none absolute inset-0 h-full w-full", className)}
     >
       <defs>
         <pattern

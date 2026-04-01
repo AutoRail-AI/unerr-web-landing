@@ -28,6 +28,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "^16.0.10",
+    "@posthog/ai": "^7.12.7",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -73,7 +74,7 @@
     "next": "^16.0.10",
     "next-themes": "^0.4.6",
     "openai": "^4.68.0",
-    "posthog-js": "^1.250.0",
+    "posthog-js": "^1.318.1",
     "posthog-node": "^5.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -156,5 +157,5 @@
   "engines": {
     "node": ">=20.9.0"
   },
-  "packageManager": "pnpm@10.0.0"
+  "packageManager": "pnpm@10.33.0"
 }

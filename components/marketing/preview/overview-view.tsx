@@ -10,13 +10,7 @@
 
 import { ArrowRight, BookOpen, Brain, FileCode, GitPullRequestArrow, Play, Shield } from "lucide-react"
 import { motion } from "framer-motion"
-import {
-  gradeColor,
-  gradeLabel,
-  gradeRoast,
-  SEVERITY_COLORS,
-  type PreviewRepo,
-} from "../preview-data"
+import { gradeColor, gradeLabel, gradeRoast, SEVERITY_COLORS, type PreviewRepo } from "../preview-data"
 import { GradeRing } from "./grade-ring"
 import { SectionCard } from "./section-card"
 
@@ -46,7 +40,7 @@ export function OverviewView({ repo }: OverviewViewProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       /* Phase 20 Pattern A: h-full overflow-y-auto > mx-auto max-w-[1800px] p-6 space-y-6 — scaled */
-      className="h-full overflow-y-auto p-4 space-y-4 animate-fade-in"
+      className="animate-fade-in h-full space-y-4 overflow-y-auto p-4"
     >
       {/* Tech stack pills */}
       <motion.div
@@ -56,11 +50,11 @@ export function OverviewView({ repo }: OverviewViewProps) {
         className="flex flex-wrap gap-1.5"
       >
         {techStack.map((tech) => (
-          <span key={tech} className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground">
+          <span key={tech} className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[9px] font-medium">
             {tech}
           </span>
         ))}
-        <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] text-muted-foreground ml-auto">
+        <span className="bg-muted text-muted-foreground ml-auto rounded-full px-2 py-0.5 text-[9px]">
           Synced 2m ago
         </span>
       </motion.div>
@@ -70,34 +64,33 @@ export function OverviewView({ repo }: OverviewViewProps) {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.4 }}
-        className="rounded-lg border border-border bg-card p-3.5"
+        className="border-border bg-card rounded-lg border p-3.5"
       >
         <div className="flex items-center gap-4">
           <GradeRing grade={repo.grade} score={repo.score} />
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h2 className="font-grotesk text-xs font-semibold text-foreground">{label}</h2>
+              <h2 className="font-grotesk text-foreground text-xs font-semibold">{label}</h2>
               {/* StreakBadge — Phase 20: fire emoji + week count for improving status */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-[9px] font-medium text-accent">
+              <span className="bg-accent/10 text-accent inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-medium">
                 🔥 3w improving
               </span>
             </div>
-            <p className="mt-0.5 text-[10px] text-muted-foreground">{roast}</p>
+            <p className="text-muted-foreground mt-0.5 text-[10px]">{roast}</p>
             <div className="mt-1.5 flex items-center gap-1.5">
               {highCount > 0 && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[9px] font-medium text-warning">
-                  <span className="h-1 w-1 rounded-full bg-warning" />
+                <span className="bg-warning/10 text-warning inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-medium">
+                  <span className="bg-warning h-1 w-1 rounded-full" />
                   {highCount} high
                 </span>
               )}
               {medCount > 0 && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                <span className="bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-medium">
                   {medCount} medium
                 </span>
               )}
-              <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-[9px] font-medium text-accent">
-                <span className="h-1 w-1 rounded-full bg-accent" />
-                2 auto-fixed
+              <span className="bg-accent/10 text-accent inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-medium">
+                <span className="bg-accent h-1 w-1 rounded-full" />2 auto-fixed
               </span>
             </div>
           </div>
@@ -114,7 +107,7 @@ export function OverviewView({ repo }: OverviewViewProps) {
               />
               <circle cx="64" cy="6" r="2" fill="var(--color-accent)" />
             </svg>
-            <p className="mt-0.5 text-center text-[8px] text-muted-foreground">8-week trend</p>
+            <p className="text-muted-foreground mt-0.5 text-center text-[8px]">8-week trend</p>
           </div>
         </div>
       </motion.div>
@@ -122,9 +115,9 @@ export function OverviewView({ repo }: OverviewViewProps) {
       {/* Top Issues */}
       {topRisks.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-[10px] font-semibold text-foreground">Top Issues</h3>
-            <span className="flex items-center gap-1 text-[9px] font-medium text-accent cursor-pointer hover:underline">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-foreground text-[10px] font-semibold">Top Issues</h3>
+            <span className="text-accent flex cursor-pointer items-center gap-1 text-[9px] font-medium hover:underline">
               View all {totalIssues} <ArrowRight className="h-2.5 w-2.5" />
             </span>
           </div>
@@ -137,18 +130,16 @@ export function OverviewView({ repo }: OverviewViewProps) {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08 }}
-                  className="rounded-lg border border-border bg-card p-2.5 hover:border-accent/40 transition-colors"
+                  className="border-border bg-card hover:border-accent/40 rounded-lg border p-2.5 transition-colors"
                 >
                   <div className="flex items-start gap-2">
                     <div className="flex flex-col items-center gap-1 pt-0.5">
                       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: sevColor }} />
-                      <span className="font-mono text-[9px] font-medium text-muted-foreground">
-                        {risk.count}
-                      </span>
+                      <span className="text-muted-foreground font-mono text-[9px] font-medium">{risk.count}</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-semibold text-foreground truncate block">{risk.label}</span>
-                      <p className="mt-0.5 text-[9px] text-muted-foreground line-clamp-2 leading-relaxed">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-foreground block truncate text-[10px] font-semibold">{risk.label}</span>
+                      <p className="text-muted-foreground mt-0.5 line-clamp-2 text-[9px] leading-relaxed">
                         {risk.detail}
                       </p>
                     </div>
@@ -168,7 +159,10 @@ export function OverviewView({ repo }: OverviewViewProps) {
           primary={repo.entityCount}
           primaryLabel="entities indexed"
           stats={[{ label: "communities", value: repo.nodes.length }]}
-          status={{ label: `${Math.round(repo.confidence * 100)}% confidence`, color: repo.confidence >= 0.8 ? "green" : "yellow" }}
+          status={{
+            label: `${Math.round(repo.confidence * 100)}% confidence`,
+            color: repo.confidence >= 0.8 ? "green" : "yellow",
+          }}
           linkText="Explore call graph"
           delay={0.45}
         />
@@ -207,7 +201,10 @@ export function OverviewView({ repo }: OverviewViewProps) {
           title="Documentation"
           primary={12}
           primaryLabel="docs tracked"
-          stats={[{ label: "verified", value: 9 }, { label: "stale", value: 3 }]}
+          stats={[
+            { label: "verified", value: 9 },
+            { label: "stale", value: 3 },
+          ]}
           status={{ label: "75% verified", color: "yellow" }}
           linkText="View doc health"
           delay={0.65}
@@ -228,23 +225,43 @@ export function OverviewView({ repo }: OverviewViewProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.65 }}
-        className="rounded-lg border border-border bg-card p-3"
+        className="border-border bg-card rounded-lg border p-3"
       >
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Architecture Composition</h3>
-          <span className="flex items-center gap-1 text-[9px] font-medium text-accent cursor-pointer hover:underline">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+            Architecture Composition
+          </h3>
+          <span className="text-accent flex cursor-pointer items-center gap-1 text-[9px] font-medium hover:underline">
             Full graph <ArrowRight className="h-2.5 w-2.5" />
           </span>
         </div>
-        <div className="flex items-center gap-0.5 h-2.5 rounded-full overflow-hidden bg-muted">
-          <div className="h-full bg-accent rounded-l-full" style={{ width: `${repo.taxonomyBreakdown.VERTICAL}%` }} />
+        <div className="bg-muted flex h-2.5 items-center gap-0.5 overflow-hidden rounded-full">
+          <div className="bg-accent h-full rounded-l-full" style={{ width: `${repo.taxonomyBreakdown.VERTICAL}%` }} />
           <div className="h-full bg-blue-500" style={{ width: `${repo.taxonomyBreakdown.HORIZONTAL}%` }} />
-          <div className="h-full bg-muted-foreground rounded-r-full" style={{ width: `${repo.taxonomyBreakdown.UTILITY}%` }} />
+          <div
+            className="bg-muted-foreground h-full rounded-r-full"
+            style={{ width: `${repo.taxonomyBreakdown.UTILITY}%` }}
+          />
         </div>
-        <div className="flex items-center gap-4 mt-1.5">
-          <div className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-accent" /><span className="text-[9px] text-muted-foreground">Logic <span className="text-foreground font-medium">{repo.taxonomyBreakdown.VERTICAL}%</span></span></div>
-          <div className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-500" /><span className="text-[9px] text-muted-foreground">Plumbing <span className="text-foreground font-medium">{repo.taxonomyBreakdown.HORIZONTAL}%</span></span></div>
-          <div className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground" /><span className="text-[9px] text-muted-foreground">Utility <span className="text-foreground font-medium">{repo.taxonomyBreakdown.UTILITY}%</span></span></div>
+        <div className="mt-1.5 flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="bg-accent h-1.5 w-1.5 rounded-full" />
+            <span className="text-muted-foreground text-[9px]">
+              Logic <span className="text-foreground font-medium">{repo.taxonomyBreakdown.VERTICAL}%</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            <span className="text-muted-foreground text-[9px]">
+              Plumbing <span className="text-foreground font-medium">{repo.taxonomyBreakdown.HORIZONTAL}%</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="bg-muted-foreground h-1.5 w-1.5 rounded-full" />
+            <span className="text-muted-foreground text-[9px]">
+              Utility <span className="text-foreground font-medium">{repo.taxonomyBreakdown.UTILITY}%</span>
+            </span>
+          </div>
         </div>
       </motion.div>
 
@@ -253,11 +270,14 @@ export function OverviewView({ repo }: OverviewViewProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 text-[10px] text-muted-foreground hover:border-accent/30 transition-colors cursor-pointer"
+        className="border-border bg-card text-muted-foreground hover:border-accent/30 flex cursor-pointer items-center gap-2 rounded-lg border p-2.5 text-[10px] transition-colors"
       >
-        <FileCode className="h-3 w-3 text-warning shrink-0" />
-        <span><span className="font-medium text-foreground">12</span> dead code entities detected — clean up to reduce bundle size</span>
-        <ArrowRight className="h-3 w-3 ml-auto shrink-0" />
+        <FileCode className="text-warning h-3 w-3 shrink-0" />
+        <span>
+          <span className="text-foreground font-medium">12</span> dead code entities detected — clean up to reduce
+          bundle size
+        </span>
+        <ArrowRight className="ml-auto h-3 w-3 shrink-0" />
       </motion.div>
     </motion.div>
   )

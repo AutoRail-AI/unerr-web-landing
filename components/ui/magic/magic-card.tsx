@@ -20,19 +20,16 @@ export function MagicCard({
 }: MagicCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      const card = cardRef.current
-      if (!card) return
-      const rect = card.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      card.style.setProperty("--mouse-x", `${x}px`)
-      card.style.setProperty("--mouse-y", `${y}px`)
-      card.style.setProperty("--gradient-opacity", "1")
-    },
-    [],
-  )
+  const handleMouseMove = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current
+    if (!card) return
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    card.style.setProperty("--mouse-x", `${x}px`)
+    card.style.setProperty("--mouse-y", `${y}px`)
+    card.style.setProperty("--gradient-opacity", "1")
+  }, [])
 
   const handleMouseLeave = useCallback(() => {
     const card = cardRef.current
@@ -44,8 +41,8 @@ export function MagicCard({
     <div
       ref={cardRef}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-300 hover:border-accent/30",
-        className,
+        "group border-border bg-card hover:border-accent/30 relative overflow-hidden rounded-2xl border transition-colors duration-300",
+        className
       )}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}

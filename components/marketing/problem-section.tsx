@@ -108,33 +108,31 @@ export function ProblemSection() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.03), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.03), transparent 65%)",
         }}
         aria-hidden="true"
       />
       <div className="mx-auto max-w-7xl">
         <h2
           ref={headingRef}
-          className="text-center font-grotesk text-3xl font-bold tracking-[-0.02em] text-lit sm:text-4xl"
+          className="font-grotesk text-lit text-center text-3xl font-bold tracking-[-0.02em] sm:text-4xl"
         >
-          Every AI coding agent today is{" "}
-          <br className="hidden sm:block" />
-          a brilliant intern with <span className="text-gradient">amnesia</span>.
+          Every AI coding agent today is <br className="hidden sm:block" />a brilliant intern with{" "}
+          <span className="text-gradient">amnesia</span>.
         </h2>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2">
           <div
             ref={withoutRef}
-            className="rounded-2xl border border-border-strong bg-card p-6 border-l-2 border-l-destructive/30"
+            className="border-border-strong bg-card border-l-destructive/30 rounded-2xl border border-l-2 p-6"
           >
-            <h3 className="font-grotesk text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <h3 className="font-grotesk text-muted-foreground text-xs font-semibold tracking-widest uppercase">
               Without unerr
             </h3>
             <ul className="mt-4 space-y-3">
               {withoutItems.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                  <X className="mt-0.5 h-4 w-4 shrink-0 text-destructive/60" />
+                <li key={item} className="text-muted-foreground flex items-start gap-2.5 text-sm">
+                  <X className="text-destructive/60 mt-0.5 h-4 w-4 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -143,19 +141,18 @@ export function ProblemSection() {
 
           <div
             ref={withRef}
-            className="rounded-2xl border border-border-strong bg-card p-6 border-l-2 border-l-accent/30"
+            className="border-border-strong bg-card border-l-accent/30 rounded-2xl border border-l-2 p-6"
             style={{
-              boxShadow:
-                "0 8px 32px -8px rgba(139,92,246,0.08), 0 0 0 1px rgba(139,92,246,0.04)",
+              boxShadow: "0 8px 32px -8px rgba(139,92,246,0.08), 0 0 0 1px rgba(139,92,246,0.04)",
             }}
           >
-            <h3 className="font-grotesk text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <h3 className="font-grotesk text-muted-foreground text-xs font-semibold tracking-widest uppercase">
               With unerr
             </h3>
             <ul className="mt-4 space-y-3">
               {withItems.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-foreground">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                <li key={item} className="text-foreground flex items-start gap-2.5 text-sm">
+                  <Check className="text-success mt-0.5 h-4 w-4 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -165,15 +162,12 @@ export function ProblemSection() {
 
         <p
           ref={quoteRef}
-          className="mx-auto mt-12 max-w-2xl text-center text-sm italic leading-relaxed text-muted-foreground"
+          className="text-muted-foreground mx-auto mt-12 max-w-2xl text-center text-sm leading-relaxed italic"
         >
-          &ldquo;AI co-authored code contains 1.7&times; more major issues,
-          75% more misconfigurations, and 2.74&times; higher security
-          vulnerabilities.&rdquo;
+          &ldquo;AI co-authored code contains 1.7&times; more major issues, 75% more misconfigurations, and 2.74&times;
+          higher security vulnerabilities.&rdquo;
           <br />
-          <span className="not-italic text-xs">
-            &mdash; Based on analysis of 470+ open-source GitHub PRs
-          </span>
+          <span className="text-xs not-italic">&mdash; Based on analysis of 470+ open-source GitHub PRs</span>
         </p>
       </div>
 

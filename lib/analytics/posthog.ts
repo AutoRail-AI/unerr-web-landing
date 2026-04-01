@@ -18,11 +18,7 @@ function getPostHog(): PostHog | null {
   return posthogServer
 }
 
-export async function trackEvent(
-  userId: string,
-  event: string,
-  properties?: Record<string, unknown>
-) {
+export async function trackEvent(userId: string, event: string, properties?: Record<string, unknown>) {
   const ph = getPostHog()
   if (!ph) return
 
@@ -33,10 +29,7 @@ export async function trackEvent(
   })
 }
 
-export async function identifyUser(
-  userId: string,
-  properties?: Record<string, unknown>
-) {
+export async function identifyUser(userId: string, properties?: Record<string, unknown>) {
   const ph = getPostHog()
   if (!ph) return
 

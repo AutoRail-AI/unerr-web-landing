@@ -12,4 +12,3 @@ describe("Health Check API", () => {
     expect(data.status).toBe("ok")
   })
 })
-

@@ -2,12 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 // Routes that require authentication
-const protectedRoutes: string[] = [
-  "/dashboard",
-  "/settings",
-  "/billing",
-  "/admin",
-]
+const protectedRoutes: string[] = ["/dashboard", "/settings", "/billing", "/admin"]
 
 // Routes that should redirect to home if already authenticated
 const authRoutes = ["/login", "/register"]
@@ -23,9 +18,7 @@ export function proxy(request: NextRequest) {
   const isAuthenticated = !!sessionToken
 
   // Check if the current path is a protected route
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  )
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
   // Check if the current path is an auth route
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))

@@ -47,8 +47,6 @@ export function identifyUser(userId: string, properties?: Record<string, unknown
 }
 
 export function resetPostHog() {
-  const ph = (window as unknown as Record<string, unknown>)["posthog"] as
-    | { reset: () => void }
-    | undefined
+  const ph = (window as unknown as Record<string, unknown>)["posthog"] as { reset: () => void } | undefined
   ph?.reset()
 }

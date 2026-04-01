@@ -33,32 +33,33 @@ export function OssTeaser() {
         whileInView="visible"
         viewport={{ once: true, margin: "-80px" }}
         variants={prefersReducedMotion ? undefined : staggerContainer}
-        className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-border-strong bg-card p-8 md:p-12"
+        className="border-border-strong bg-card relative mx-auto max-w-3xl overflow-hidden rounded-2xl border p-8 md:p-12"
         style={{
-          backgroundImage:
-            "linear-gradient(135deg, rgba(139,92,246,0.05) 0%, transparent 50%)",
+          backgroundImage: "linear-gradient(135deg, rgba(139,92,246,0.05) 0%, transparent 50%)",
         }}
       >
         <BorderBeam duration={12} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />
-        <motion.span variants={staggerChild} className="text-xs font-bold uppercase tracking-widest text-accent">
+        <motion.span variants={staggerChild} className="text-accent text-xs font-bold tracking-widest uppercase">
           OSS Guardian
         </motion.span>
-        <motion.h2 variants={staggerChild} className="mt-4 font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit md:text-3xl">
+        <motion.h2
+          variants={staggerChild}
+          className="font-grotesk text-lit mt-4 text-2xl font-bold tracking-[-0.02em] md:text-3xl"
+        >
           Free. Forever. No asterisks.
         </motion.h2>
-        <motion.p variants={staggerChild} className="mt-1 text-sm text-muted-foreground/80">
+        <motion.p variants={staggerChild} className="text-muted-foreground/80 mt-1 text-sm">
           Full knowledge graph + health audit for any public repository.
         </motion.p>
-        <motion.p variants={staggerChild} className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
-          Any verified open-source project gets unerr Pro for free. Full knowledge
-          graph, PR review, health grades, MCP integration. Because maintainers
-          deserve a tech lead, not another AI bot.
+        <motion.p variants={staggerChild} className="text-muted-foreground mt-4 max-w-xl leading-relaxed">
+          Any verified open-source project gets unerr Pro for free. Full knowledge graph, PR review, health grades, MCP
+          integration. Because maintainers deserve a tech lead, not another AI bot.
         </motion.p>
         <motion.div variants={staggerChild}>
           <button
             type="button"
             onClick={() => openWaitlist("oss")}
-            className="mt-6 inline-flex items-center gap-1.5 font-medium text-accent transition-colors hover:text-accent/80"
+            className="text-accent hover:text-accent/80 mt-6 inline-flex items-center gap-1.5 font-medium transition-colors"
           >
             Protect Your Project
             <ArrowRight className="h-4 w-4" />

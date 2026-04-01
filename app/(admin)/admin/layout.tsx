@@ -3,11 +3,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { hasPermission } from "@/lib/config/roles"
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) {
     redirect("/login")
@@ -24,4 +20,3 @@ export default async function AdminLayout({
 
   return <>{children}</>
 }
-

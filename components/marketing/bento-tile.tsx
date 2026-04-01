@@ -10,11 +10,7 @@ interface BentoTileProps {
 
 export function BentoTile({ children, className = "" }: BentoTileProps) {
   return (
-    <MagicCard
-      className={className}
-      gradientColor="rgba(139, 92, 246, 0.12)"
-      gradientSize={300}
-    >
+    <MagicCard className={className} gradientColor="rgba(139, 92, 246, 0.12)" gradientSize={300}>
       <div className="p-5 pt-4">{children}</div>
     </MagicCard>
   )

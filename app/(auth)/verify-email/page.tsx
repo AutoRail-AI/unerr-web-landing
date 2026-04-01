@@ -3,7 +3,7 @@
 import { CheckCircle2, Mail, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Suspense , useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 
@@ -14,9 +14,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
 
-  const [status, setStatus] = useState<"loading" | "success" | "error" | "no-token">(
-    token ? "loading" : "no-token"
-  )
+  const [status, setStatus] = useState<"loading" | "success" | "error" | "no-token">(token ? "loading" : "no-token")
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -35,7 +33,7 @@ function VerifyEmailContent() {
             router.push("/login")
           }, 3000)
         } else {
-          const data = await response.json() as { message?: string }
+          const data = (await response.json()) as { message?: string }
           setError(data.message || "Verification failed")
           setStatus("error")
         }
@@ -50,27 +48,26 @@ function VerifyEmailContent() {
 
   if (status === "no-token") {
     return (
-      <div className="max-w-md mx-auto space-y-6 text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-          <Mail className="h-6 w-6 text-muted-foreground" />
+      <div className="mx-auto max-w-md space-y-6 text-center">
+        <div className="bg-muted mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+          <Mail className="text-muted-foreground h-6 w-6" />
         </div>
         <div className="space-y-0.5">
           <h1 className="text-lg font-semibold">Check your email</h1>
-          <p className="mt-0.5 text-sm text-foreground">
-            We&apos;ve sent you a verification link. Click the link in your email
-            to verify your account.
+          <p className="text-foreground mt-0.5 text-sm">
+            We&apos;ve sent you a verification link. Click the link in your email to verify your account.
           </p>
         </div>
         <Alert>
           <Mail className="h-4 w-4" />
-          <AlertDescription>
-            If you don&apos;t see the email, check your spam folder.
-          </AlertDescription>
+          <AlertDescription>If you don&apos;t see the email, check your spam folder.</AlertDescription>
         </Alert>
 
         <div>
           <Link href="/login">
-            <Button variant="outline" size="sm">Back to login</Button>
+            <Button variant="outline" size="sm">
+              Back to login
+            </Button>
           </Link>
         </div>
       </div>
@@ -79,15 +76,13 @@ function VerifyEmailContent() {
 
   if (status === "loading") {
     return (
-      <div className="max-w-md mx-auto space-y-6 text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <Spinner className="h-6 w-6 text-primary" />
+      <div className="mx-auto max-w-md space-y-6 text-center">
+        <div className="bg-primary/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+          <Spinner className="text-primary h-6 w-6" />
         </div>
         <div className="space-y-0.5">
           <h1 className="text-lg font-semibold">Verifying email...</h1>
-          <p className="mt-0.5 text-sm text-foreground">
-            Please wait while we verify your email address.
-          </p>
+          <p className="text-foreground mt-0.5 text-sm">Please wait while we verify your email address.</p>
         </div>
       </div>
     )
@@ -95,15 +90,14 @@ function VerifyEmailContent() {
 
   if (status === "success") {
     return (
-      <div className="max-w-md mx-auto space-y-6 text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+      <div className="mx-auto max-w-md space-y-6 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
           <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <div className="space-y-0.5">
           <h1 className="text-lg font-semibold">Email verified!</h1>
-          <p className="mt-0.5 text-sm text-foreground">
-            Your email has been successfully verified. You can now sign in to
-            your account.
+          <p className="text-foreground mt-0.5 text-sm">
+            Your email has been successfully verified. You can now sign in to your account.
           </p>
         </div>
         <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
@@ -124,29 +118,25 @@ function VerifyEmailContent() {
 
   // Error state
   return (
-    <div className="max-w-md mx-auto space-y-6 text-center">
-      <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
-        <XCircle className="h-6 w-6 text-destructive" />
+    <div className="mx-auto max-w-md space-y-6 text-center">
+      <div className="bg-destructive/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+        <XCircle className="text-destructive h-6 w-6" />
       </div>
       <div className="space-y-0.5">
         <h1 className="text-lg font-semibold">Verification failed</h1>
-        <p className="mt-0.5 text-sm text-foreground">
-          We couldn&apos;t verify your email address.
-        </p>
+        <p className="text-foreground mt-0.5 text-sm">We couldn&apos;t verify your email address.</p>
       </div>
       <Alert variant="destructive">
         <XCircle className="h-4 w-4" />
-        <AlertDescription>
-          {error || "The verification link may have expired or is invalid."}
-        </AlertDescription>
+        <AlertDescription>{error || "The verification link may have expired or is invalid."}</AlertDescription>
       </Alert>
 
       <div className="space-y-2">
-        <p className="text-sm text-foreground">
-          Need a new verification link?
-        </p>
+        <p className="text-foreground text-sm">Need a new verification link?</p>
         <Link href="/register">
-          <Button variant="outline" size="sm">Try registering again</Button>
+          <Button variant="outline" size="sm">
+            Try registering again
+          </Button>
         </Link>
       </div>
     </div>
@@ -155,9 +145,9 @@ function VerifyEmailContent() {
 
 function VerifyEmailLoading() {
   return (
-    <div className="max-w-md mx-auto space-y-6 text-center">
-      <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <Spinner className="h-6 w-6 text-primary" />
+    <div className="mx-auto max-w-md space-y-6 text-center">
+      <div className="bg-primary/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+        <Spinner className="text-primary h-6 w-6" />
       </div>
       <h1 className="text-lg font-semibold">Loading...</h1>
     </div>

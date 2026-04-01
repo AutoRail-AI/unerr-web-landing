@@ -16,7 +16,11 @@ export function AnalyzingOverlay({ repo }: AnalyzingOverlayProps) {
     const t1 = setTimeout(() => setStep(1), 500)
     const t2 = setTimeout(() => setStep(2), 1100)
     const t3 = setTimeout(() => setStep(3), 1700)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
   }, [])
 
   const steps = [
@@ -31,12 +35,10 @@ export function AnalyzingOverlay({ repo }: AnalyzingOverlayProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-card"
+      className="bg-card absolute inset-0 z-30 flex flex-col items-center justify-center"
     >
-      <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-      <p className="mt-4 font-mono text-base text-foreground">
-        Analyzing {repo.slug}
-      </p>
+      <div className="border-accent h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+      <p className="text-foreground mt-4 font-mono text-base">Analyzing {repo.slug}</p>
       <div className="mt-5 space-y-3">
         {steps.map((label, i) => (
           <motion.div
@@ -44,12 +46,12 @@ export function AnalyzingOverlay({ repo }: AnalyzingOverlayProps) {
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.4 + 0.3 }}
-            className="flex items-center gap-2.5 text-sm text-muted-foreground"
+            className="text-muted-foreground flex items-center gap-2.5 text-sm"
           >
             {step > i ? (
-              <Check className="h-3.5 w-3.5 text-success" />
+              <Check className="text-success h-3.5 w-3.5" />
             ) : (
-              <div className="h-3.5 w-3.5 animate-spin rounded-full border border-accent/60 border-t-transparent" />
+              <div className="border-accent/60 h-3.5 w-3.5 animate-spin rounded-full border border-t-transparent" />
             )}
             {label}
           </motion.div>

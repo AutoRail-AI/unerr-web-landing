@@ -13,7 +13,10 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, public fields?: Record<string, string[]>) {
+  constructor(
+    message: string,
+    public fields?: Record<string, string[]>
+  ) {
     super(message, 400, "VALIDATION_ERROR")
     this.name = "ValidationError"
   }
@@ -21,11 +24,7 @@ export class ValidationError extends AppError {
 
 export class NotFoundError extends AppError {
   constructor(resource: string, id?: string) {
-    super(
-      id ? `${resource} with id ${id} not found` : `${resource} not found`,
-      404,
-      "NOT_FOUND"
-    )
+    super(id ? `${resource} with id ${id} not found` : `${resource} not found`, 404, "NOT_FOUND")
     this.name = "NotFoundError"
   }
 }
@@ -45,7 +44,10 @@ export class ForbiddenError extends AppError {
 }
 
 export class RateLimitError extends AppError {
-  constructor(message: string = "Rate limit exceeded", public resetAt?: Date) {
+  constructor(
+    message: string = "Rate limit exceeded",
+    public resetAt?: Date
+  ) {
     super(message, 429, "RATE_LIMIT_EXCEEDED")
     this.name = "RateLimitError"
   }
@@ -61,4 +63,3 @@ export class QuotaExceededError extends AppError {
     this.name = "QuotaExceededError"
   }
 }
-

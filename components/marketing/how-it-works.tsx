@@ -100,25 +100,22 @@ export function HowItWorks({ terminalHtml }: HowItWorksProps) {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.05), transparent 60%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.05), transparent 60%)",
         }}
         aria-hidden="true"
       />
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center font-grotesk text-3xl font-bold tracking-[-0.02em] text-lit sm:text-4xl">
+        <h2 className="font-grotesk text-lit text-center text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
           Zero to protected in 60 seconds.
         </h2>
-        <p className="mt-3 text-center text-sm text-muted-foreground/80">
-          One command. Full graph. Zero config.
-        </p>
+        <p className="text-muted-foreground/80 mt-3 text-center text-sm">One command. Full graph. Zero config.</p>
 
         <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-24">
           {/* Left: Scrolling Steps with timeline rail */}
           <div ref={stepsRef} className="relative flex flex-col gap-32 py-12">
             {/* Timeline rail — runs through the center of all badges */}
             <div
-              className="absolute bottom-12 left-[19px] top-12 w-px bg-border/20 lg:block hidden"
+              className="bg-border/20 absolute top-12 bottom-12 left-[19px] hidden w-px lg:block"
               aria-hidden="true"
             />
 
@@ -128,28 +125,28 @@ export function HowItWorks({ terminalHtml }: HowItWorksProps) {
                 <div key={step.num} className="step-item relative flex gap-5">
                   {/* Badge on timeline */}
                   <div className="relative z-10 shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-fade text-sm font-bold text-primary-foreground shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+                    <div className="bg-accent-fade text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)]">
                       {step.num}
                     </div>
                   </div>
 
                   {/* Content block */}
                   <div className="min-w-0 flex-1 pt-1">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
+                    <div className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">
                       Step {step.num} &mdash; {step.label}
                     </div>
                     <div className="mt-1.5 flex items-center gap-2.5">
-                      <Icon className="h-5 w-5 shrink-0 text-accent" />
-                      <h3 className="font-grotesk text-xl font-semibold tracking-tight text-foreground">
+                      <Icon className="text-accent h-5 w-5 shrink-0" />
+                      <h3 className="font-grotesk text-foreground text-xl font-semibold tracking-tight">
                         {step.title}
                       </h3>
                     </div>
-                    <p className="mt-2.5 max-w-md text-base leading-relaxed text-muted-foreground">
+                    <p className="text-muted-foreground mt-2.5 max-w-md text-base leading-relaxed">
                       {step.description}
                     </p>
 
                     {/* Mobile inline code snippet — visible only when terminal is hidden */}
-                    <div className="mt-4 w-full overflow-hidden rounded-lg border border-border bg-background p-3 font-mono text-[12px] leading-relaxed lg:hidden">
+                    <div className="border-border bg-background mt-4 w-full overflow-hidden rounded-lg border p-3 font-mono text-[12px] leading-relaxed lg:hidden">
                       {step.code.map((line) => (
                         <div key={line.text} className={line.style}>
                           {line.text}
@@ -165,18 +162,16 @@ export function HowItWorks({ terminalHtml }: HowItWorksProps) {
           {/* Right: Pinned Terminal — desktop only */}
           <div className="relative hidden h-[600px] lg:block">
             <div ref={terminalRef} className="absolute top-0 w-full">
-              <div className="overflow-hidden rounded-xl border border-border-strong bg-background shadow-2xl shadow-accent/5">
+              <div className="border-border-strong bg-background shadow-accent/5 overflow-hidden rounded-xl border shadow-2xl">
                 {/* Title bar with traffic lights + path */}
-                <div className="flex h-9 items-center gap-1.5 border-b border-border-strong px-4">
+                <div className="border-border-strong flex h-9 items-center gap-1.5 border-b px-4">
                   <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
                   <div className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
                   <div className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-                  <span className="ml-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                  <span className="text-muted-foreground ml-2 font-mono text-[11px] tracking-widest uppercase">
                     terminal
                   </span>
-                  <span className="ml-auto font-mono text-[10px] text-muted-foreground/30">
-                    ~/project
-                  </span>
+                  <span className="text-muted-foreground/30 ml-auto font-mono text-[10px]">~/project</span>
                 </div>
 
                 {/* Terminal content */}
@@ -194,19 +189,17 @@ export function HowItWorks({ terminalHtml }: HowItWorksProps) {
                       <div className="text-success">✓ MCP server configured at localhost:9315</div>
                       <div className="text-success">✓ Indexing 3 repositories...</div>
                       <div className="text-success">✓ Health audit complete — Grade: A (92/100)</div>
-                      <div className="mt-2 text-foreground">unerr is now supervising your AI agents.</div>
+                      <div className="text-foreground mt-2">unerr is now supervising your AI agents.</div>
                     </>
                   )}
-                  <span className="mt-1 inline-block h-4 w-2 animate-pulse bg-success" />
+                  <span className="bg-success mt-1 inline-block h-4 w-2 animate-pulse" />
                 </div>
 
                 {/* Status bar — connected session indicator */}
-                <div className="flex items-center gap-2 border-t border-border/50 px-4 py-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                  <span className="font-mono text-[10px] text-muted-foreground/40">
-                    MCP connected · localhost:9315
-                  </span>
-                  <span className="ml-auto font-mono text-[10px] text-muted-foreground/20">
+                <div className="border-border/50 flex items-center gap-2 border-t px-4 py-1.5">
+                  <span className="bg-success h-1.5 w-1.5 rounded-full" />
+                  <span className="text-muted-foreground/40 font-mono text-[10px]">MCP connected · localhost:9315</span>
+                  <span className="text-muted-foreground/20 ml-auto font-mono text-[10px]">
                     3 repos · 12,847 entities
                   </span>
                 </div>

@@ -36,16 +36,11 @@ export function HeroProductPreview() {
   const repo = repos.find((r) => r.slug === selectedSlug) ?? repos[0]!
 
   const filteredRepos = inputValue
-    ? repos.filter((r) =>
-        r.slug.toLowerCase().includes(inputValue.toLowerCase()),
-      )
+    ? repos.filter((r) => r.slug.toLowerCase().includes(inputValue.toLowerCase()))
     : repos
 
   const isUnknownRepo =
-    inputValue.length > 3 &&
-    !repos.some((r) =>
-      r.slug.toLowerCase().includes(inputValue.toLowerCase()),
-    )
+    inputValue.length > 3 && !repos.some((r) => r.slug.toLowerCase().includes(inputValue.toLowerCase()))
 
   const handleSelectRepo = useCallback(
     (slug: string) => {
@@ -62,7 +57,7 @@ export function HeroProductPreview() {
       setIsAnalyzing(true)
       analyzeTimer.current = setTimeout(() => setIsAnalyzing(false), 2200)
     },
-    [selectedSlug],
+    [selectedSlug]
   )
 
   const handleKeyDown = useCallback(
@@ -85,7 +80,7 @@ export function HeroProductPreview() {
         setHighlightedIdx(-1)
       }
     },
-    [showSuggestions, filteredRepos, highlightedIdx, handleSelectRepo],
+    [showSuggestions, filteredRepos, highlightedIdx, handleSelectRepo]
   )
 
   useEffect(() => {
@@ -105,27 +100,25 @@ export function HeroProductPreview() {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-xl border border-border-strong bg-card"
+      className="border-border-strong bg-card relative overflow-hidden rounded-xl border"
       style={{
         boxShadow:
           "0 25px 60px -12px rgba(0,0,0,0.5), 0 0 120px rgba(139,92,246,0.04), 0 0 0 1px rgba(139,92,246,0.06)",
       }}
     >
       {/* ─── Window chrome ─── */}
-      <div className="flex items-center gap-2.5 border-b border-border px-5 py-3">
+      <div className="border-border flex items-center gap-2.5 border-b px-5 py-3">
         <div className="flex gap-1.5">
           <div className="h-3 w-3 rounded-full bg-[#FF5F57]" />
           <div className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
           <div className="h-3 w-3 rounded-full bg-[#28C840]" />
         </div>
-        <span className="ml-2 text-xs font-mono uppercase tracking-widest text-muted-foreground">
-          unerr
-        </span>
+        <span className="text-muted-foreground ml-2 font-mono text-xs tracking-widest uppercase">unerr</span>
 
         {/* Search bar inline */}
-        <div className="relative ml-4 flex-1 max-w-xs">
-          <div className="flex items-center gap-2 rounded-md border border-border bg-background/50 px-2.5 py-1">
-            <Search className="h-3 w-3 shrink-0 text-muted-foreground" />
+        <div className="relative ml-4 max-w-xs flex-1">
+          <div className="border-border bg-background/50 flex items-center gap-2 rounded-md border px-2.5 py-1">
+            <Search className="text-muted-foreground h-3 w-3 shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -137,75 +130,65 @@ export function HeroProductPreview() {
               onFocus={() => setShowSuggestions(true)}
               onKeyDown={handleKeyDown}
               placeholder={repo.slug}
-              className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none"
+              className="text-foreground placeholder:text-muted-foreground/50 flex-1 bg-transparent text-xs outline-none"
             />
           </div>
 
           {/* Suggestions dropdown */}
           <AnimatePresence>
-            {showSuggestions &&
-              (inputValue || document.activeElement === inputRef.current) && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute left-0 right-0 top-full z-50 mt-1 rounded-md border border-border bg-popover shadow-lg overflow-hidden"
-                >
-                  {filteredRepos.map((r, idx) => (
-                    <button
-                      key={r.slug}
-                      type="button"
-                      onClick={() => handleSelectRepo(r.slug)}
-                      onMouseEnter={() => setHighlightedIdx(idx)}
-                      className={`flex w-full items-center gap-3 px-3 py-2 text-left text-xs transition-colors ${
-                        r.slug === selectedSlug
-                          ? "border-l-2 border-l-accent/30 bg-accent/5"
-                          : highlightedIdx === idx
-                            ? "bg-muted/80 text-foreground"
-                            : "hover:bg-muted/50"
-                      }`}
-                    >
-                      <span className="font-mono text-[10px] text-foreground">{r.slug}</span>
-                      <span className="ml-auto text-[9px] text-muted-foreground">
-                        {r.entityCount.toLocaleString()} entities
-                      </span>
-                      <span
-                        className="font-grotesk text-[10px] font-bold"
-                        style={{ color: gradeColor(r.score) }}
-                      >
-                        {r.grade}
-                      </span>
-                    </button>
-                  ))}
-                  {isUnknownRepo && (
-                    <a
-                      href="/login"
-                      className="flex w-full items-center gap-2 px-3 py-2 text-xs text-accent transition-colors hover:bg-muted/50"
-                    >
-                      Sign up to analyze{" "}
-                      <span className="font-mono text-foreground">{inputValue}</span>
-                      <span className="ml-auto">&rarr;</span>
-                    </a>
-                  )}
-                </motion.div>
-              )}
+            {showSuggestions && (inputValue || document.activeElement === inputRef.current) && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="border-border bg-popover absolute top-full right-0 left-0 z-50 mt-1 overflow-hidden rounded-md border shadow-lg"
+              >
+                {filteredRepos.map((r, idx) => (
+                  <button
+                    key={r.slug}
+                    type="button"
+                    onClick={() => handleSelectRepo(r.slug)}
+                    onMouseEnter={() => setHighlightedIdx(idx)}
+                    className={`flex w-full items-center gap-3 px-3 py-2 text-left text-xs transition-colors ${
+                      r.slug === selectedSlug
+                        ? "border-l-accent/30 bg-accent/5 border-l-2"
+                        : highlightedIdx === idx
+                          ? "bg-muted/80 text-foreground"
+                          : "hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="text-foreground font-mono text-[10px]">{r.slug}</span>
+                    <span className="text-muted-foreground ml-auto text-[9px]">
+                      {r.entityCount.toLocaleString()} entities
+                    </span>
+                    <span className="font-grotesk text-[10px] font-bold" style={{ color: gradeColor(r.score) }}>
+                      {r.grade}
+                    </span>
+                  </button>
+                ))}
+                {isUnknownRepo && (
+                  <a
+                    href="/login"
+                    className="text-accent hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors"
+                  >
+                    Sign up to analyze <span className="text-foreground font-mono">{inputValue}</span>
+                    <span className="ml-auto">&rarr;</span>
+                  </a>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
 
       {/* ─── Mobile grade badge ─── */}
-      <div className="flex items-center gap-3 border-b border-border px-5 py-2.5 md:hidden">
-        <span
-          className="font-grotesk text-lg font-bold"
-          style={{ color: gradeColor(repo.score) }}
-        >
+      <div className="border-border flex items-center gap-3 border-b px-5 py-2.5 md:hidden">
+        <span className="font-grotesk text-lg font-bold" style={{ color: gradeColor(repo.score) }}>
           {repo.grade}
         </span>
-        <span className="text-xs text-muted-foreground">{repo.score}/100</span>
-        <span className="text-xs text-muted-foreground">
-          &middot; {repo.entityCount.toLocaleString()} entities
-        </span>
+        <span className="text-muted-foreground text-xs">{repo.score}/100</span>
+        <span className="text-muted-foreground text-xs">&middot; {repo.entityCount.toLocaleString()} entities</span>
       </div>
 
       {/* ─── RepoShell (Phase 19: flex, h-screen → clamped for preview) ─── */}
@@ -214,9 +197,9 @@ export function HeroProductPreview() {
         <NavRail active={activeTab} onSelect={setActiveTab} repo={repo} />
 
         {/* TabCanvas (Phase 19: flex-1 min-w-0 h-full overflow-hidden) */}
-        <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden" data-tab-canvas>
+        <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden" data-tab-canvas>
           {/* Mobile tab bar (hidden on desktop — NavRail handles navigation) */}
-          <div className="flex border-b border-border md:hidden">
+          <div className="border-border flex border-b md:hidden">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id
               return (
@@ -226,7 +209,7 @@ export function HeroProductPreview() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 text-xs font-medium transition-colors ${
                     isActive
-                      ? "border-b-2 border-accent text-foreground"
+                      ? "border-accent text-foreground border-b-2"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >

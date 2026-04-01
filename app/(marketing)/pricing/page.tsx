@@ -16,15 +16,15 @@ export default function PricingPage() {
       <PricingCards />
       {/* Energy thread — narrative pivot from hero → social proof */}
       <div className="mx-auto w-full max-w-6xl px-6" aria-hidden="true">
-        <div className="border-t border-border/10" />
+        <div className="border-border/10 border-t" />
       </div>
       <OssCallout />
       <div className="mx-auto w-full max-w-6xl px-6" aria-hidden="true">
-        <div className="border-t border-border/10" />
+        <div className="border-border/10 border-t" />
       </div>
       <ComparisonTable />
       <div className="mx-auto w-full max-w-6xl px-6" aria-hidden="true">
-        <div className="border-t border-border/10" />
+        <div className="border-border/10 border-t" />
       </div>
       <FaqAccordion />
     </div>

@@ -18,12 +18,7 @@ const proFeatures = [
   "Unlimited private repos",
 ]
 
-const ossFeatures = [
-  "Full knowledge graph",
-  "Health audit & grades",
-  "MCP server integration",
-  "AI PR review",
-]
+const ossFeatures = ["Full knowledge graph", "Health audit & grades", "MCP server integration", "AI PR review"]
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
@@ -51,8 +46,7 @@ export function PricingPreview() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.05), transparent 70%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.05), transparent 70%)",
         }}
         aria-hidden="true"
       />
@@ -66,10 +60,10 @@ export function PricingPreview() {
           variants={prefersReducedMotion ? undefined : fadeUp}
           className="text-center"
         >
-          <h2 className="font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
+          <h2 className="font-grotesk text-lit text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
             Infrastructure-grade. Developer-priced.
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-3 text-sm">
             Free forever for open source. One simple plan for everything else.
           </p>
         </motion.div>
@@ -85,35 +79,30 @@ export function PricingPreview() {
           {/* OSS Card */}
           <motion.div
             variants={staggerChild}
-            className="relative overflow-hidden rounded-2xl border border-border bg-card p-8"
+            className="border-border bg-card relative overflow-hidden rounded-2xl border p-8"
             style={{
-              backgroundImage:
-                "linear-gradient(135deg, rgba(139,92,246,0.04) 0%, transparent 50%)",
+              backgroundImage: "linear-gradient(135deg, rgba(139,92,246,0.04) 0%, transparent 50%)",
             }}
           >
             <div className="flex items-center gap-2">
-              <Github className="h-4 w-4 text-accent" />
-              <span className="text-xs font-bold uppercase tracking-widest text-accent">
-                OSS Guardian
-              </span>
+              <Github className="text-accent h-4 w-4" />
+              <span className="text-accent text-xs font-bold tracking-widest uppercase">OSS Guardian</span>
             </div>
 
             <div className="mt-5 flex items-baseline gap-1.5">
-              <span className="font-grotesk text-4xl font-bold tracking-tight text-foreground">
-                $0
-              </span>
-              <span className="text-sm text-muted-foreground">/ forever</span>
+              <span className="font-grotesk text-foreground text-4xl font-bold tracking-tight">$0</span>
+              <span className="text-muted-foreground text-sm">/ forever</span>
             </div>
 
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Full unerr Pro for verified open-source projects. Because maintainers
-              deserve a tech lead, not another AI bot.
+            <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+              Full unerr Pro for verified open-source projects. Because maintainers deserve a tech lead, not another AI
+              bot.
             </p>
 
             <div className="mt-6 space-y-2.5">
               {ossFeatures.map((f) => (
-                <div key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+                <div key={f} className="text-muted-foreground flex items-start gap-2 text-sm">
+                  <Check className="text-success mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <span>{f}</span>
                 </div>
               ))}
@@ -122,7 +111,7 @@ export function PricingPreview() {
             <button
               type="button"
               onClick={() => openWaitlist("oss")}
-              className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent/80"
+              className="text-accent hover:text-accent/80 mt-8 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
             >
               Protect Your Project
               <ArrowRight className="h-3.5 w-3.5" />
@@ -132,42 +121,35 @@ export function PricingPreview() {
           {/* Pro Card */}
           <motion.div
             variants={staggerChild}
-            className="relative overflow-hidden rounded-2xl border border-accent/20 bg-card p-8"
+            className="border-accent/20 bg-card relative overflow-hidden rounded-2xl border p-8"
           >
             <BorderBeam duration={13} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />
 
-            <span className="text-xs font-bold uppercase tracking-widest text-accent">
-              Pro
-            </span>
+            <span className="text-accent text-xs font-bold tracking-widest uppercase">Pro</span>
 
             <div className="mt-5 flex items-baseline gap-1.5">
-              <span className="font-grotesk text-4xl font-bold tracking-tight text-foreground">
-                $20
-              </span>
-              <span className="text-sm text-muted-foreground">/ month</span>
+              <span className="font-grotesk text-foreground text-4xl font-bold tracking-tight">$20</span>
+              <span className="text-muted-foreground text-sm">/ month</span>
             </div>
 
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
               Everything you need for safe AI velocity on private codebases.
             </p>
 
             <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-2.5">
               {proFeatures.map((f) => (
-                <div key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+                <div key={f} className="text-muted-foreground flex items-start gap-2 text-sm">
+                  <Check className="text-success mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <span>{f}</span>
                 </div>
               ))}
             </div>
 
-            <ShimmerButton
-              onClick={() => openWaitlist("general")}
-              className="mt-8 flex h-10 w-full justify-center"
-            >
+            <ShimmerButton onClick={() => openWaitlist("general")} className="mt-8 flex h-10 w-full justify-center">
               Get Started Free &mdash; 7 day trial
             </ShimmerButton>
 
-            <p className="mt-3 text-center text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-3 text-center text-xs">
               Teams from $45/mo (3 seats &times; $15) &middot;{" "}
               <Link href="/pricing" className="text-accent hover:text-accent/80">
                 See all plans &rarr;

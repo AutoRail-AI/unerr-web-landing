@@ -12,7 +12,7 @@ const footerLinks: Array<{ label: string; href: string; external?: boolean }> = 
 
 export function SiteFooter() {
   return (
-    <footer className="relative border-t border-border bg-background">
+    <footer className="border-border bg-background relative border-t">
       {/* Top fade + subtle glow — dissolves footer out of CTA glow */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-16"
@@ -24,8 +24,7 @@ export function SiteFooter() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.02), transparent 60%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.02), transparent 60%)",
         }}
         aria-hidden="true"
       />
@@ -35,17 +34,17 @@ export function SiteFooter() {
             key={link.href + link.label}
             href={link.href}
             {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
           >
             {link.label}
           </Link>
         ))}
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 pb-10 pt-2">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-2 pb-10">
         <div className="flex items-center gap-3">
           <BrandLogo variant="icon" size="sm" href={false} />
-          <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} unerr Inc.</p>
+          <p className="text-muted-foreground text-xs">&copy; {new Date().getFullYear()} unerr Inc.</p>
         </div>
         <div className="flex items-center gap-4">
           <a
@@ -53,7 +52,7 @@ export function SiteFooter() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path
@@ -68,7 +67,7 @@ export function SiteFooter() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="X (Twitter)"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />

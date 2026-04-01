@@ -17,7 +17,7 @@ export async function TerminalCode() {
 
   return (
     <div
-      className="terminal-shiki [&_pre]:!bg-transparent [&_pre]:!p-0 [&_code]:!text-[13px] [&_code]:!leading-relaxed [&_code]:!font-mono"
+      className="terminal-shiki [&_code]:!font-mono [&_code]:!text-[13px] [&_code]:!leading-relaxed [&_pre]:!bg-transparent [&_pre]:!p-0"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

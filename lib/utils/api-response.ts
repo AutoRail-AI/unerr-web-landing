@@ -8,11 +8,7 @@ export interface ApiResponse<T = any> {
   message?: string
 }
 
-export function successResponse<T>(
-  data: T,
-  message?: string,
-  status: number = 200
-): NextResponse<ApiResponse<T>> {
+export function successResponse<T>(data: T, message?: string, status: number = 200): NextResponse<ApiResponse<T>> {
   return NextResponse.json(
     {
       success: true,
@@ -41,21 +37,15 @@ export function errorResponse(
   )
 }
 
-export function unauthorizedResponse(
-  message: string = "Unauthorized"
-): NextResponse<ApiResponse> {
+export function unauthorizedResponse(message: string = "Unauthorized"): NextResponse<ApiResponse> {
   return errorResponse(message, 401)
 }
 
-export function forbiddenResponse(
-  message: string = "Forbidden"
-): NextResponse<ApiResponse> {
+export function forbiddenResponse(message: string = "Forbidden"): NextResponse<ApiResponse> {
   return errorResponse(message, 403)
 }
 
-export function notFoundResponse(
-  message: string = "Not found"
-): NextResponse<ApiResponse> {
+export function notFoundResponse(message: string = "Not found"): NextResponse<ApiResponse> {
   return errorResponse(message, 404)
 }
 
@@ -66,4 +56,3 @@ export function serverErrorResponse(
 ): NextResponse<ApiResponse> {
   return errorResponse(error, 500, details)
 }
-

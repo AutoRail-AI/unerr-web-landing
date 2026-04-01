@@ -39,7 +39,7 @@ export function withOptionalAuth(handler: ApiHandler) {
       const session = await auth.api.getSession({ headers: await headers() })
       return handler(req, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        session: session || null as any,
+        session: session || (null as any),
         userId: session?.user.id || "",
       })
     } catch (error) {
@@ -64,4 +64,3 @@ function handleError(error: unknown): NextResponse {
 
   return serverErrorResponse("Unknown error occurred")
 }
-

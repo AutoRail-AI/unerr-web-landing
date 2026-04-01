@@ -36,27 +36,24 @@ function ProductAbstract() {
       initial={{ opacity: 0, y: 20, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: 0.5, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="overflow-hidden rounded-xl border border-border-strong bg-card"
+      className="border-border-strong bg-card overflow-hidden rounded-xl border"
       style={{
-        boxShadow:
-          "0 25px 60px -12px rgba(0,0,0,0.5), 0 0 80px rgba(139,92,246,0.04), 0 0 0 1px rgba(139,92,246,0.06)",
+        boxShadow: "0 25px 60px -12px rgba(0,0,0,0.5), 0 0 80px rgba(139,92,246,0.04), 0 0 0 1px rgba(139,92,246,0.06)",
       }}
     >
       {/* Window chrome — matches landing page HeroProductPreview */}
-      <div className="flex items-center gap-1.5 border-b border-border px-4 py-2.5">
+      <div className="border-border flex items-center gap-1.5 border-b px-4 py-2.5">
         <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
         <div className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
         <div className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-        <span className="ml-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          unerr
-        </span>
+        <span className="text-muted-foreground ml-2 font-mono text-[11px] tracking-widest uppercase">unerr</span>
       </div>
 
       {/* Repo bar */}
-      <div className="flex items-center gap-2.5 border-b border-border px-4 py-2">
-        <span className="font-mono text-xs text-muted-foreground/50">repo:</span>
-        <span className="font-mono text-xs text-foreground">facebook/react</span>
-        <span className="ml-auto text-[10px] text-muted-foreground/30">Updated just now</span>
+      <div className="border-border flex items-center gap-2.5 border-b px-4 py-2">
+        <span className="text-muted-foreground/50 font-mono text-xs">repo:</span>
+        <span className="text-foreground font-mono text-xs">facebook/react</span>
+        <span className="text-muted-foreground/30 ml-auto text-[10px]">Updated just now</span>
       </div>
 
       {/* Content */}
@@ -64,7 +61,7 @@ function ProductAbstract() {
         {/* Grade headline */}
         <div className="flex items-start gap-4">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-grotesk text-2xl font-bold"
+            className="font-grotesk flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold"
             style={{
               backgroundColor: "rgba(34,197,94,0.1)",
               color: "#22C55E",
@@ -74,48 +71,38 @@ function ProductAbstract() {
             A
           </div>
           <div className="min-w-0 flex-1 pt-0.5">
-            <div className="font-grotesk text-sm font-semibold text-foreground">
+            <div className="font-grotesk text-foreground text-sm font-semibold">
               92 / 100
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                — Excellent
-              </span>
+              <span className="text-muted-foreground ml-1.5 text-xs font-normal">— Excellent</span>
             </div>
-            <div className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-              Clean architecture with minor coupling concerns. Your AI agents
-              will have strong context for safe contributions.
+            <div className="text-muted-foreground mt-1 text-[11px] leading-relaxed">
+              Clean architecture with minor coupling concerns. Your AI agents will have strong context for safe
+              contributions.
             </div>
           </div>
         </div>
 
         {/* Score bar */}
         <div className="mt-3">
-          <div className="h-1 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-success"
-              style={{ width: "92%" }}
-            />
+          <div className="bg-muted h-1 overflow-hidden rounded-full">
+            <div className="bg-success h-full rounded-full" style={{ width: "92%" }} />
           </div>
         </div>
 
         {/* Top Issues */}
         <div className="mt-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="text-muted-foreground text-[10px] font-semibold tracking-[0.12em] uppercase">
             Top Issues Your AI Will Hit
           </div>
           <div className="mt-3 space-y-2">
             {topIssues.map((issue) => (
-              <div
-                key={issue.label}
-                className="rounded-lg border border-border/50 px-3 py-2.5"
-              >
+              <div key={issue.label} className="border-border/50 rounded-lg border px-3 py-2.5">
                 <div className="flex items-center gap-2">
                   <span
                     className="inline-block h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: SEV_COLORS[issue.severity] }}
                   />
-                  <span className="flex-1 truncate text-xs font-medium text-foreground">
-                    {issue.label}
-                  </span>
+                  <span className="text-foreground flex-1 truncate text-xs font-medium">{issue.label}</span>
                   <span
                     className="shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px]"
                     style={{
@@ -126,16 +113,14 @@ function ProductAbstract() {
                     {issue.count} found
                   </span>
                 </div>
-                <div className="mt-1 pl-4 text-[11px] leading-relaxed text-muted-foreground">
-                  {issue.detail}
-                </div>
+                <div className="text-muted-foreground mt-1 pl-4 text-[11px] leading-relaxed">{issue.detail}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Stats footer */}
-        <div className="mt-4 flex items-center gap-1.5 border-t border-border/50 pt-3 font-mono text-[10px] text-muted-foreground/50">
+        <div className="border-border/50 text-muted-foreground/50 mt-4 flex items-center gap-1.5 border-t pt-3 font-mono text-[10px]">
           <span>12,847 entities</span>
           <span>&middot;</span>
           <span>823 files</span>
@@ -150,13 +135,12 @@ function ProductAbstract() {
 export function OssHero() {
   const prefersReducedMotion = useReducedMotion()
   return (
-    <section className="relative overflow-hidden px-6 pb-20 pt-28 lg:pb-28 lg:pt-36">
+    <section className="relative overflow-hidden px-6 pt-28 pb-20 lg:pt-36 lg:pb-28">
       {/* Layer 1 — faint dot grid (matches landing page hero) */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           opacity: 0.025,
         }}
@@ -198,7 +182,7 @@ export function OssHero() {
             {/* Badge */}
             <motion.div
               variants={staggerChild}
-              className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent"
+              className="border-accent/20 bg-accent/5 text-accent inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold tracking-widest uppercase"
             >
               OSS Guardian Program
             </motion.div>
@@ -206,10 +190,9 @@ export function OssHero() {
             {/* Headline */}
             <motion.h1
               variants={staggerChild}
-              className="mt-8 max-w-xl font-grotesk text-3xl font-bold tracking-[-0.03em] leading-[1.08] text-center text-lit sm:text-4xl md:text-5xl lg:text-left lg:text-5xl"
+              className="font-grotesk text-lit mt-8 max-w-xl text-center text-3xl leading-[1.08] font-bold tracking-[-0.03em] sm:text-4xl md:text-5xl lg:text-left lg:text-5xl"
             >
-              The virtual{" "}
-              <span className="text-gradient">tech lead</span>
+              The virtual <span className="text-gradient">tech lead</span>
               <br className="hidden sm:block" />
               your project deserves.
             </motion.h1>
@@ -217,23 +200,18 @@ export function OssHero() {
             {/* Subtitle */}
             <motion.p
               variants={staggerChild}
-              className="mt-6 max-w-lg text-center text-base leading-relaxed text-muted-foreground lg:text-left md:text-lg"
+              className="text-muted-foreground mt-6 max-w-lg text-center text-base leading-relaxed md:text-lg lg:text-left"
             >
-              Full knowledge graph. PR review. Health grades. MCP integration.
-              Free for every verified open-source project. Forever.
+              Full knowledge graph. PR review. Health grades. MCP integration. Free for every verified open-source
+              project. Forever.
             </motion.p>
 
             {/* Dual CTAs */}
-            <motion.div
-              variants={staggerChild}
-              className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
-            >
-              <ShimmerButton href="/login">
-                Protect Your Project
-              </ShimmerButton>
+            <motion.div variants={staggerChild} className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+              <ShimmerButton href="/login">Protect Your Project</ShimmerButton>
               <a
                 href="#audit"
-                className="inline-flex h-11 items-center gap-1.5 rounded-full border border-border px-6 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="border-border text-foreground hover:border-accent/30 hover:bg-muted focus-visible:ring-accent focus-visible:ring-offset-background inline-flex h-11 items-center gap-1.5 rounded-full border px-6 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               >
                 Run a Free Audit First
                 <span aria-hidden="true">&darr;</span>

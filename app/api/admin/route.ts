@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
   // Get organization count
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const orgCount = await (prisma as any).organization?.count() || 0
+  const orgCount = (await (prisma as any).organization?.count()) || 0
 
   return NextResponse.json({
     stats: {

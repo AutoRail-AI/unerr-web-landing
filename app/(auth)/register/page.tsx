@@ -9,12 +9,10 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="max-w-md mx-auto space-y-6">
+    <div className="mx-auto max-w-md space-y-6">
       <div className="space-y-0.5 text-center">
         <h1 className="text-lg font-semibold">Create an account</h1>
-        <p className="mt-0.5 text-sm text-foreground">
-          Get started today
-        </p>
+        <p className="text-foreground mt-0.5 text-sm">Get started today</p>
       </div>
 
       <div className="space-y-4">
@@ -25,9 +23,7 @@ export default function RegisterPage() {
             <Separator className="w-full" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with email
-            </span>
+            <span className="bg-background text-muted-foreground px-2">Or continue with email</span>
           </div>
         </div>
 

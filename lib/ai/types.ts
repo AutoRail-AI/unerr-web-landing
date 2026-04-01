@@ -35,11 +35,14 @@ export interface AgentTool {
   description: string
   parameters: {
     type: "object"
-    properties: Record<string, {
-      type: string
-      description: string
-      required?: boolean
-    }>
+    properties: Record<
+      string,
+      {
+        type: string
+        description: string
+        required?: boolean
+      }
+    >
     required?: string[]
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,4 +56,3 @@ export interface AgentConfig {
   tools?: AgentTool[]
   systemPrompt?: string
 }
-

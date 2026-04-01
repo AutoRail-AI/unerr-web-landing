@@ -38,11 +38,8 @@ export function AnimatedGridPattern({
   }, [])
 
   const getPos = useCallback(
-    () => [
-      Math.floor((Math.random() * dims.w) / width),
-      Math.floor((Math.random() * dims.h) / height),
-    ],
-    [dims.w, dims.h, width, height],
+    () => [Math.floor((Math.random() * dims.w) / width), Math.floor((Math.random() * dims.h) / height)],
+    [dims.w, dims.h, width, height]
   )
 
   const [squares, setSquares] = useState<Array<{ id: number; pos: number[] }>>([])
@@ -52,22 +49,17 @@ export function AnimatedGridPattern({
       setSquares(
         Array.from({ length: numSquares }, (_, i) => ({
           id: i,
-          pos: [
-            Math.floor((Math.random() * dims.w) / width),
-            Math.floor((Math.random() * dims.h) / height),
-          ],
-        })),
+          pos: [Math.floor((Math.random() * dims.w) / width), Math.floor((Math.random() * dims.h) / height)],
+        }))
       )
     }
   }, [dims, numSquares, width, height])
 
   const updateSquarePos = useCallback(
     (i: number) => {
-      setSquares((prev) =>
-        prev.map((sq, idx) => (idx === i ? { ...sq, pos: getPos() } : sq)),
-      )
+      setSquares((prev) => prev.map((sq, idx) => (idx === i ? { ...sq, pos: getPos() } : sq)))
     },
-    [getPos],
+    [getPos]
   )
 
   return (
@@ -75,8 +67,8 @@ export function AnimatedGridPattern({
       ref={containerRef}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-muted-foreground/30 stroke-muted-foreground/30",
-        className,
+        "fill-muted-foreground/30 stroke-muted-foreground/30 pointer-events-none absolute inset-0 h-full w-full",
+        className
       )}
     >
       <defs>

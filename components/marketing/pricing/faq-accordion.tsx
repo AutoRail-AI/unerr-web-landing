@@ -60,8 +60,7 @@ export function FaqAccordion() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
         }}
         aria-hidden="true"
       />
@@ -77,29 +76,20 @@ export function FaqAccordion() {
             variants={prefersReducedMotion ? undefined : fadeUp}
             className="lg:sticky lg:top-24 lg:self-start"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-              FAQ
-            </p>
-            <h2 className="mt-3 font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
+            <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">FAQ</p>
+            <h2 className="font-grotesk text-lit mt-3 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
               Frequently asked questions
             </h2>
-            <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-3 max-w-sm text-sm">
               Can&apos;t find what you&apos;re looking for? Reach out at{" "}
-              <a
-                href="mailto:hello@unerr.dev"
-                className="text-accent transition-colors hover:text-accent/80"
-              >
+              <a href="mailto:hello@unerr.dev" className="text-accent hover:text-accent/80 transition-colors">
                 hello@unerr.dev
               </a>
             </p>
           </motion.div>
 
           {/* Right: Accordion */}
-          <Accordion.Root
-            type="single"
-            collapsible
-            asChild
-          >
+          <Accordion.Root type="single" collapsible asChild>
             <motion.div
               className="space-y-2"
               initial={prefersReducedMotion ? false : "hidden"}
@@ -111,16 +101,14 @@ export function FaqAccordion() {
                 <motion.div key={i} variants={prefersReducedMotion ? undefined : staggerChild}>
                   <Accordion.Item
                     value={`faq-${i}`}
-                    className="rounded-xl border border-border-strong bg-card transition-colors hover:border-border"
+                    className="border-border-strong bg-card hover:border-border rounded-xl border transition-colors"
                   >
-                    <Accordion.Trigger className="group flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-foreground transition-colors hover:text-foreground/80 [&[data-state=open]>svg]:rotate-180">
+                    <Accordion.Trigger className="group text-foreground hover:text-foreground/80 flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium transition-colors [&[data-state=open]>svg]:rotate-180">
                       {faq.q}
-                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+                      <ChevronDown className="text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-200" />
                     </Accordion.Trigger>
-                    <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                      <div className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">
-                        {faq.a}
-                      </div>
+                    <Accordion.Content className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden">
+                      <div className="text-muted-foreground px-5 pb-4 text-sm leading-relaxed">{faq.a}</div>
                     </Accordion.Content>
                   </Accordion.Item>
                 </motion.div>

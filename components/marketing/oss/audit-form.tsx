@@ -48,8 +48,7 @@ export function AuditForm() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.06), transparent 60%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.06), transparent 60%)",
         }}
         aria-hidden="true"
       />
@@ -61,27 +60,22 @@ export function AuditForm() {
         variants={prefersReducedMotion ? undefined : fadeUp}
         className="relative mx-auto max-w-2xl"
       >
-        <div className="relative overflow-hidden rounded-2xl border border-accent/15 bg-card p-8 md:p-10">
+        <div className="border-accent/15 bg-card relative overflow-hidden rounded-2xl border p-8 md:p-10">
           <BorderBeam duration={14} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />
 
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-            Try it now
-          </p>
-          <h2 className="mt-3 font-grotesk text-xl font-bold tracking-[-0.02em] text-foreground sm:text-2xl">
+          <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Try it now</p>
+          <h2 className="font-grotesk text-foreground mt-3 text-xl font-bold tracking-[-0.02em] sm:text-2xl">
             Run a free health audit
           </h2>
-          <p className="mt-2 max-w-md text-sm text-muted-foreground">
-            No signup required. Enter any public GitHub repo and get a full
-            13-type health report in under 60 seconds.
+          <p className="text-muted-foreground mt-2 max-w-md text-sm">
+            No signup required. Enter any public GitHub repo and get a full 13-type health report in under 60 seconds.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8">
             <div className="flex flex-col gap-3 sm:flex-row">
               {/* Input with prefix */}
-              <div className="flex flex-1 items-center overflow-hidden rounded-lg border border-border bg-muted">
-                <span className="shrink-0 px-3 font-mono text-sm text-muted-foreground">
-                  github.com /
-                </span>
+              <div className="border-border bg-muted flex flex-1 items-center overflow-hidden rounded-lg border">
+                <span className="text-muted-foreground shrink-0 px-3 font-mono text-sm">github.com /</span>
                 <input
                   type="text"
                   value={value}
@@ -91,7 +85,7 @@ export function AuditForm() {
                   }}
                   placeholder="owner/repo"
                   aria-label="GitHub repository in owner/repo format"
-                  className="h-11 flex-1 bg-transparent pr-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+                  className="text-foreground placeholder:text-muted-foreground/50 h-11 flex-1 bg-transparent pr-3 font-mono text-sm focus:outline-none"
                   autoComplete="off"
                   spellCheck={false}
                 />
@@ -101,7 +95,7 @@ export function AuditForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-accent-fade px-6 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="bg-accent-fade text-primary-foreground inline-flex h-11 items-center justify-center gap-1.5 rounded-lg px-6 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -115,12 +109,10 @@ export function AuditForm() {
             </div>
 
             {/* Error state */}
-            {error && (
-              <p className="mt-2 text-xs text-destructive">{error}</p>
-            )}
+            {error && <p className="text-destructive mt-2 text-xs">{error}</p>}
           </form>
 
-          <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground/50">
+          <p className="text-muted-foreground/50 mt-5 text-[11px] font-medium tracking-[0.08em] uppercase">
             13 risk types · Full health report · Under 60 seconds
           </p>
         </div>

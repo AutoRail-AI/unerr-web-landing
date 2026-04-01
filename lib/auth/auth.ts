@@ -20,11 +20,13 @@ const prisma = getPrisma()
 const authConfig: Parameters<typeof betterAuth>[0] = {
   // Database adapter - Using Prisma with PostgreSQL (Supabase)
   // Only include if prisma is available (after client generation)
-  ...(prisma ? {
-    database: prismaAdapter(prisma, {
-      provider: "postgresql",
-    }),
-  } : {}),
+  ...(prisma
+    ? {
+        database: prismaAdapter(prisma, {
+          provider: "postgresql",
+        }),
+      }
+    : {}),
 
   // App configuration
   appName: "unerr",

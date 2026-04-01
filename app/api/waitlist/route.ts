@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db/prisma"
+import { trackEvent } from "@/lib/analytics/posthog"
 
 export async function POST(request: Request) {
   try {
@@ -15,24 +16,15 @@ export async function POST(request: Request) {
     const { name, email, linkedin, plan, githubUrl, maintainerProof } = body
 
     if (!name || !email) {
-      return NextResponse.json(
-        { error: "Name and email are required" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Name and email are required" }, { status: 400 })
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email address" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 })
     }
 
     if (linkedin && !/linkedin\.com\/in\//.test(linkedin)) {
-      return NextResponse.json(
-        { error: "Please provide a valid LinkedIn profile URL" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Please provide a valid LinkedIn profile URL" }, { status: 400 })
     }
 
     const selectedPlan = plan === "oss" ? "oss" : "general"
@@ -45,18 +37,12 @@ export async function POST(request: Request) {
         )
       }
       if (!/github\.com\//.test(githubUrl)) {
-        return NextResponse.json(
-          { error: "Please provide a valid GitHub URL" },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: "Please provide a valid GitHub URL" }, { status: 400 })
       }
     }
 
     if (!prisma) {
-      return NextResponse.json(
-        { error: "Database not available" },
-        { status: 503 }
-      )
+      return NextResponse.json({ error: "Database not available" }, { status: 503 })
     }
 
     const existing = await prisma.waitlist.findUnique({
@@ -64,10 +50,7 @@ export async function POST(request: Request) {
     })
 
     if (existing) {
-      return NextResponse.json(
-        { message: "You're already on the waitlist!" },
-        { status: 200 }
-      )
+      return NextResponse.json({ message: "You're already on the waitlist!" }, { status: 200 })
     }
 
     await prisma.waitlist.create({
@@ -81,16 +64,16 @@ export async function POST(request: Request) {
       },
     })
 
-    return NextResponse.json(
-      { message: "You've been added to the waitlist!" },
-      { status: 201 }
-    )
+    await trackEvent(email, "waitlist_joined", {
+      plan: selectedPlan,
+      has_linkedin: !!linkedin,
+      has_github_url: !!githubUrl,
+    })
+
+    return NextResponse.json({ message: "You've been added to the waitlist!" }, { status: 201 })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error)
     console.error("Waitlist error:", message)
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 })
   }
 }

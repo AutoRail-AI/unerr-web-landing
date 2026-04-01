@@ -11,11 +11,7 @@ interface HeroAnimationProps {
   subtitle: ReactNode
 }
 
-export function HeroAnimation({
-  headline,
-  gradientLine,
-  subtitle,
-}: HeroAnimationProps) {
+export function HeroAnimation({ headline, gradientLine, subtitle }: HeroAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const prefersReduced = useReducedMotion()
 
@@ -28,12 +24,12 @@ export function HeroAnimation({
       // Headline words reveal
       tl.set(".hero-word", { opacity: 1, filter: "blur(0px)", y: 0 })
         .from(".hero-word", {
-        y: 40,
-        opacity: 0,
-        filter: "blur(10px)",
-        stagger: 0.04,
-        duration: 0.8,
-      })
+          y: 40,
+          opacity: 0,
+          filter: "blur(10px)",
+          stagger: 0.04,
+          duration: 0.8,
+        })
         // Subtitle slide up
         .from(
           ".hero-subtitle",
@@ -42,7 +38,7 @@ export function HeroAnimation({
             opacity: 0,
             duration: 0.6,
           },
-          "-=0.4",
+          "-=0.4"
         )
     }, containerRef)
 
@@ -56,23 +52,21 @@ export function HeroAnimation({
     <div ref={containerRef} className="flex flex-col">
       <h1 className={headingClasses}>
         {headline.split(" ").map((word, i) => (
-          <span key={i} className="hero-word inline-block mr-[0.28em] text-lit">
+          <span key={i} className="hero-word text-lit mr-[0.28em] inline-block">
             {word}
           </span>
         ))}
         <br />
         <span>
           {gradientLine.split(" ").map((word, i) => (
-            <span key={i} className="hero-word inline-block mr-[0.28em] text-gradient">
+            <span key={i} className="hero-word text-gradient mr-[0.28em] inline-block">
               {word}
             </span>
           ))}
         </span>
       </h1>
 
-      <div className="hero-subtitle mt-6">
-        {subtitle}
-      </div>
+      <div className="hero-subtitle mt-6">{subtitle}</div>
     </div>
   )
 }

@@ -33,24 +33,20 @@ export const metadata: Metadata = {
   },
 }
 
-export default function MarketingLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <MarketingProviders>
       {/* Skip-to-content — A11Y requirement */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-accent-fade focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
+        className="focus:bg-accent-fade focus:text-primary-foreground sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-medium"
       >
         Skip to content
       </a>
 
       <SiteHeader />
       <ScrollProgressBar />
-      <main id="main-content" className="relative min-h-screen bg-background">
+      <main id="main-content" className="bg-background relative min-h-screen">
         {/* Page-level continuous grid — spans all sections for "one void" illusion */}
         <div
           className="pointer-events-none fixed inset-0 z-0"
@@ -59,8 +55,7 @@ export default function MarketingLayout({
               "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
             backgroundSize: "60px 60px",
             opacity: 0.03,
-            maskImage:
-              "radial-gradient(ellipse at 50% 30%, black 0%, transparent 85%)",
+            maskImage: "radial-gradient(ellipse at 50% 30%, black 0%, transparent 85%)",
           }}
           aria-hidden="true"
         />

@@ -8,8 +8,7 @@ export function HeroSection() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           opacity: 0.025,
         }}
@@ -47,15 +46,16 @@ export function HeroSection() {
             headline="AI agents write the code."
             gradientLine="unerr enforces the architecture."
             subtitle={
-              <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
-                The missing backend for AI coding agents &mdash; a living knowledge graph that turns every AI suggestion into architecture-safe code.
+              <p className="text-muted-foreground text-base leading-relaxed md:text-lg">
+                The missing backend for AI coding agents &mdash; a living knowledge graph that turns every AI suggestion
+                into architecture-safe code.
               </p>
             }
           />
         </div>
 
         {/* Product preview — full width, below headline, ~70vh total */}
-        <div className="mt-20 animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "backwards" }}>
+        <div className="animate-fade-in mt-20" style={{ animationDelay: "0.6s", animationFillMode: "backwards" }}>
           <HeroProductPreview />
         </div>
       </div>
@@ -64,8 +64,7 @@ export function HeroSection() {
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
         style={{
-          background:
-            "linear-gradient(to top, var(--color-background), transparent)",
+          background: "linear-gradient(to top, var(--color-background), transparent)",
         }}
         aria-hidden="true"
       />

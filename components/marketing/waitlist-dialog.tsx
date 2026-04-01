@@ -1,14 +1,9 @@
 "use client"
 
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react"
 import { Github, Loader2 } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import posthog from "posthog-js"
+import { createContext, type ReactNode, useCallback, useContext, useState } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -43,6 +38,7 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
     setErrorMsg("")
     setSuccessMsg("")
     setIsOpen(true)
+    posthog.capture("waitlist_dialog_opened", { plan: defaultPlan })
   }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -82,6 +78,7 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
 
       setStatus("success")
       setSuccessMsg(body.message || "You're on the list!")
+      posthog.capture("waitlist_form_submitted", { plan, status: res.status === 201 ? "new" : "existing" })
     } catch {
       setStatus("error")
       setErrorMsg("Network error. Please try again.")
@@ -94,9 +91,7 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="border-border/60 bg-background sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-grotesk text-xl tracking-tight">
-              Join the waitlist
-            </DialogTitle>
+            <DialogTitle className="font-grotesk text-xl tracking-tight">Join the waitlist</DialogTitle>
             <DialogDescription>
               Be the first to know when unerr launches. We&apos;ll notify you as soon as access opens up.
             </DialogDescription>
@@ -104,25 +99,29 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
 
           {status === "success" ? (
             <div className="py-6 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
-                <svg className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="bg-accent/10 mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
+                <svg
+                  className="text-accent h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-foreground">{successMsg}</p>
-              <p className="mt-1 text-xs text-muted-foreground">We&apos;ll be in touch soon.</p>
+              <p className="text-foreground text-sm font-medium">{successMsg}</p>
+              <p className="text-muted-foreground mt-1 text-xs">We&apos;ll be in touch soon.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-2 space-y-4">
               {/* Plan toggle */}
-              <div className="flex rounded-lg border border-border p-1">
+              <div className="border-border flex rounded-lg border p-1">
                 <button
                   type="button"
                   onClick={() => setPlan("general")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    plan === "general"
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                    plan === "general" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   General
@@ -131,9 +130,7 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => setPlan("oss")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    plan === "oss"
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                    plan === "oss" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Github className="h-3.5 w-3.5" />
@@ -143,13 +140,7 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
 
               <div className="space-y-2">
                 <Label htmlFor="wl-name">Name</Label>
-                <Input
-                  id="wl-name"
-                  name="name"
-                  placeholder="Jane Smith"
-                  required
-                  autoComplete="name"
-                />
+                <Input id="wl-name" name="name" placeholder="Jane Smith" required autoComplete="name" />
               </div>
 
               <div className="space-y-2">
@@ -181,15 +172,8 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="wl-github">GitHub repo or organization</Label>
-                    <Input
-                      id="wl-github"
-                      name="githubUrl"
-                      placeholder="https://github.com/org/repo"
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      The open-source project you maintain.
-                    </p>
+                    <Input id="wl-github" name="githubUrl" placeholder="https://github.com/org/repo" required />
+                    <p className="text-muted-foreground text-xs">The open-source project you maintain.</p>
                   </div>
 
                   <div className="space-y-2">
@@ -201,21 +185,19 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
                       name="maintainerProof"
                       placeholder="https://github.com/org/repo/commits?author=you"
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       A link that shows you&apos;re a maintainer — commit history, CODEOWNERS, team page, etc.
                     </p>
                   </div>
                 </>
               )}
 
-              {status === "error" && (
-                <p className="text-sm text-destructive">{errorMsg}</p>
-              )}
+              {status === "error" && <p className="text-destructive text-sm">{errorMsg}</p>}
 
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-full bg-accent-fade text-sm font-medium text-primary-foreground shadow-[0_0_24px_rgba(139,92,246,0.25)] transition-all hover:shadow-[0_0_32px_rgba(139,92,246,0.4)] disabled:opacity-60"
+                className="group bg-accent-fade text-primary-foreground relative flex h-10 w-full items-center justify-center overflow-hidden rounded-full text-sm font-medium shadow-[0_0_24px_rgba(139,92,246,0.25)] transition-all hover:shadow-[0_0_32px_rgba(139,92,246,0.4)] disabled:opacity-60"
               >
                 <span
                   className="pointer-events-none absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"

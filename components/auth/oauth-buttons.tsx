@@ -1,5 +1,6 @@
 "use client"
 
+import posthog from "posthog-js"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -38,6 +39,7 @@ export function OAuthButtons({ mode = "login" }: OAuthButtonsProps) {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true)
+    posthog.capture("oauth_sign_in_clicked", { provider: "google", mode })
     try {
       await signIn.social({
         provider: "google",
@@ -60,11 +62,7 @@ export function OAuthButtons({ mode = "login" }: OAuthButtonsProps) {
         onClick={handleGoogleSignIn}
         disabled={isGoogleLoading}
       >
-        {isGoogleLoading ? (
-          <Spinner className="mr-2 h-3.5 w-3.5" />
-        ) : (
-          <GoogleIcon className="mr-2 h-4 w-4" />
-        )}
+        {isGoogleLoading ? <Spinner className="mr-2 h-3.5 w-3.5" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
         {mode === "login" ? "Sign in with Google" : "Sign up with Google"}
       </Button>
     </div>

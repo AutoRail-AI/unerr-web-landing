@@ -9,17 +9,12 @@ interface RippleProps {
   numCircles?: number
 }
 
-export function Ripple({
-  className,
-  mainCircleSize = 210,
-  mainCircleOpacity = 0.24,
-  numCircles = 8,
-}: RippleProps) {
+export function Ripple({ className, mainCircleSize = 210, mainCircleOpacity = 0.24, numCircles = 8 }: RippleProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute inset-0 select-none mask-[linear-gradient(to_bottom,white,transparent)]",
-        className,
+        "pointer-events-none absolute inset-0 mask-[linear-gradient(to_bottom,white,transparent)] select-none",
+        className
       )}
     >
       {Array.from({ length: numCircles }, (_, i) => {
@@ -29,7 +24,7 @@ export function Ripple({
         return (
           <div
             key={i}
-            className="absolute left-1/2 top-1/2 animate-ripple rounded-full border bg-foreground/25"
+            className="animate-ripple bg-foreground/25 absolute top-1/2 left-1/2 rounded-full border"
             style={{
               width: size,
               height: size,

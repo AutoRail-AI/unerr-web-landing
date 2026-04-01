@@ -3,6 +3,7 @@
 import { AlertCircle, CheckCircle2, Lock, Mail, User } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import posthog from "posthog-js"
 import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -52,6 +53,8 @@ export function RegisterForm() {
         return
       }
 
+      posthog.identify(email, { email, name })
+      posthog.capture("user_registered", { method: "email" })
       // Show success message - email verification required
       setSuccess(true)
     } catch (err) {
@@ -70,24 +73,19 @@ export function RegisterForm() {
           <AlertDescription className="text-green-800 dark:text-green-200">
             <strong>Check your email!</strong>
             <br />
-            We&apos;ve sent a verification link to <strong>{email}</strong>.
-            Please click the link to verify your account.
+            We&apos;ve sent a verification link to <strong>{email}</strong>. Please click the link to verify your
+            account.
           </AlertDescription>
         </Alert>
 
-        <div className="text-center text-sm text-foreground">
+        <div className="text-foreground text-center text-sm">
           <p>Didn&apos;t receive the email?</p>
-          <Button
-            variant="link"
-            size="sm"
-            className="p-0 h-auto"
-            onClick={() => setSuccess(false)}
-          >
+          <Button variant="link" size="sm" className="h-auto p-0" onClick={() => setSuccess(false)}>
             Try again with a different email
           </Button>
         </div>
 
-        <p className="text-center text-sm text-foreground">
+        <p className="text-foreground text-center text-sm">
           Already verified?{" "}
           <Link href="/login" className="text-primary hover:underline">
             Sign in
@@ -107,9 +105,11 @@ export function RegisterForm() {
       )}
 
       <div className="space-y-1.5">
-        <Label htmlFor="name" className="text-xs text-muted-foreground">Full Name</Label>
+        <Label htmlFor="name" className="text-muted-foreground text-xs">
+          Full Name
+        </Label>
         <div className="relative">
-          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <User className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="name"
             type="text"
@@ -124,9 +124,11 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
+        <Label htmlFor="email" className="text-muted-foreground text-xs">
+          Email
+        </Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="email"
             type="email"
@@ -141,9 +143,11 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
+        <Label htmlFor="password" className="text-muted-foreground text-xs">
+          Password
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="password"
             type="password"
@@ -159,9 +163,11 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-muted-foreground text-xs">
+          Confirm Password
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="confirmPassword"
             type="password"
@@ -186,20 +192,20 @@ export function RegisterForm() {
         )}
       </Button>
 
-      <p className="text-center text-sm text-foreground">
+      <p className="text-foreground text-center text-sm">
         Already have an account?{" "}
         <Link href="/login" className="text-primary hover:underline">
           Sign in
         </Link>
       </p>
 
-      <p className="text-center text-xs text-foreground">
+      <p className="text-foreground text-center text-xs">
         By creating an account, you agree to our{" "}
-        <Link href="/terms" className="underline hover:text-primary">
+        <Link href="/terms" className="hover:text-primary underline">
           Terms of Service
         </Link>{" "}
         and{" "}
-        <Link href="/privacy" className="underline hover:text-primary">
+        <Link href="/privacy" className="hover:text-primary underline">
           Privacy Policy
         </Link>
       </p>

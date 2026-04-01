@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
+import posthog from "posthog-js"
 import { ShimmerButton } from "@/components/marketing/shimmer-button"
 import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { AnimatedGridPattern } from "@/components/ui/magic/animated-grid"
@@ -44,7 +45,7 @@ export function FinalCta() {
         variants={prefersReducedMotion ? undefined : fadeUp}
         className="relative z-10 mx-auto max-w-2xl text-center"
       >
-        <h2 className="font-grotesk text-3xl font-bold tracking-[-0.02em] text-lit sm:text-4xl">
+        <h2 className="font-grotesk text-lit text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
           Your AI agents need <span className="text-gradient">architecture</span>.
           <br />
           Give them unerr.
@@ -53,14 +54,11 @@ export function FinalCta() {
         {/* Social proof echo — bookend callback to MetricsBar */}
         <div className="mx-auto mt-8 flex max-w-sm items-center justify-center">
           {proofPoints.map((p, i) => (
-            <div
-              key={p.label}
-              className={`flex-1 text-center ${i > 0 ? "border-l border-border/15" : ""}`}
-            >
-              <div className="font-grotesk text-lg font-bold tabular-nums tracking-tight text-foreground">
+            <div key={p.label} className={`flex-1 text-center ${i > 0 ? "border-border/15 border-l" : ""}`}>
+              <div className="font-grotesk text-foreground text-lg font-bold tracking-tight tabular-nums">
                 {p.value}
               </div>
-              <div className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+              <div className="text-muted-foreground mt-0.5 text-[10px] font-medium tracking-[0.08em] uppercase">
                 {p.label}
               </div>
             </div>
@@ -68,20 +66,28 @@ export function FinalCta() {
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <ShimmerButton onClick={() => openWaitlist("general")}>
+          <ShimmerButton
+            onClick={() => {
+              posthog.capture("final_cta_clicked", { cta: "get_started_free", plan: "general" })
+              openWaitlist("general")
+            }}
+          >
             Get Started Free
           </ShimmerButton>
           <button
             type="button"
-            onClick={() => openWaitlist("oss")}
-            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-border px-6 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            onClick={() => {
+              posthog.capture("final_cta_clicked", { cta: "protect_oss_project", plan: "oss" })
+              openWaitlist("oss")
+            }}
+            className="border-border text-foreground hover:border-accent/30 hover:bg-muted focus-visible:ring-accent focus-visible:ring-offset-background inline-flex h-11 items-center gap-1.5 rounded-full border px-6 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Protect an OSS Project
             <span aria-hidden="true">&rarr;</span>
           </button>
         </div>
 
-        <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+        <p className="text-muted-foreground/60 mt-6 text-[11px] font-medium tracking-[0.08em] uppercase">
           Free for 7 days &middot; No credit card &middot; Setup in 60 seconds
         </p>
       </motion.div>

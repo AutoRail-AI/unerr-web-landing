@@ -36,37 +36,37 @@ export function SectionCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
-      className="rounded-lg border border-border bg-card/50 p-3 flex flex-col justify-between min-h-[120px]"
+      className="border-border bg-card/50 flex min-h-[120px] flex-col justify-between rounded-lg border p-3"
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <Icon className="h-3 w-3 text-muted-foreground" />
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{title}</span>
+          <Icon className="text-muted-foreground h-3 w-3" />
+          <span className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">{title}</span>
         </div>
         {status && (
           <div className="flex items-center gap-1">
             <span className={`h-1.5 w-1.5 rounded-full ${STATUS_COLORS[status.color]}`} />
-            <span className="text-[9px] text-muted-foreground">{status.label}</span>
+            <span className="text-muted-foreground text-[9px]">{status.label}</span>
           </div>
         )}
       </div>
       <div className="mb-1.5">
-        <p className="font-grotesk text-xl font-semibold text-foreground leading-none">
+        <p className="font-grotesk text-foreground text-xl leading-none font-semibold">
           {typeof primary === "number" ? primary.toLocaleString() : primary}
         </p>
-        <p className="mt-0.5 text-[9px] text-muted-foreground">{primaryLabel}</p>
+        <p className="text-muted-foreground mt-0.5 text-[9px]">{primaryLabel}</p>
       </div>
       {stats && stats.length > 0 && (
-        <div className="flex items-center gap-2.5 mb-2">
+        <div className="mb-2 flex items-center gap-2.5">
           {stats.map((stat) => (
             <div key={stat.label} className="flex items-center gap-1">
-              <span className="text-[10px] font-medium text-foreground">{stat.value}</span>
-              <span className="text-[9px] text-muted-foreground">{stat.label}</span>
+              <span className="text-foreground text-[10px] font-medium">{stat.value}</span>
+              <span className="text-muted-foreground text-[9px]">{stat.label}</span>
             </div>
           ))}
         </div>
       )}
-      <div className="flex items-center gap-1 text-[9px] font-medium text-accent mt-auto pt-1 cursor-pointer hover:underline">
+      <div className="text-accent mt-auto flex cursor-pointer items-center gap-1 pt-1 text-[9px] font-medium hover:underline">
         {linkText ?? `View ${title.toLowerCase()}`} <ArrowRight className="h-2 w-2" />
       </div>
     </motion.div>

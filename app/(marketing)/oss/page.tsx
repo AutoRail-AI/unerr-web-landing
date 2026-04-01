@@ -20,7 +20,7 @@ export default function OSSPage() {
       <CrisisCards />
       {/* Energy thread — narrative pivot from crisis → solution */}
       <div className="mx-auto w-full max-w-6xl px-6" aria-hidden="true">
-        <div className="border-t border-border/10" />
+        <div className="border-border/10 border-t" />
       </div>
       <PainSolution />
       <FeatureList />

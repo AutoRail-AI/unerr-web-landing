@@ -3,6 +3,7 @@
 import { AlertCircle, Lock, Mail } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import posthog from "posthog-js"
 import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -34,6 +35,8 @@ export function LoginForm() {
         return
       }
 
+      posthog.identify(email, { email })
+      posthog.capture("user_signed_in", { method: "email" })
       router.push("/")
       router.refresh()
     } catch (err) {
@@ -54,9 +57,11 @@ export function LoginForm() {
       )}
 
       <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
+        <Label htmlFor="email" className="text-muted-foreground text-xs">
+          Email
+        </Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="email"
             type="email"
@@ -72,16 +77,15 @@ export function LoginForm() {
 
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
-          <Link
-            href="/forgot-password"
-            className="text-xs text-primary hover:underline"
-          >
+          <Label htmlFor="password" className="text-muted-foreground text-xs">
+            Password
+          </Label>
+          <Link href="/forgot-password" className="text-primary text-xs hover:underline">
             Forgot password?
           </Link>
         </div>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             id="password"
             type="password"
@@ -106,7 +110,7 @@ export function LoginForm() {
         )}
       </Button>
 
-      <p className="text-center text-sm text-foreground">
+      <p className="text-foreground text-center text-sm">
         Don&apos;t have an account?{" "}
         <Link href="/register" className="text-primary hover:underline">
           Sign up

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
- 
+
 /**
  * Copyright (c) HashiCorp, Inc.
  * SPDX-License-Identifier: MPL-2.0
@@ -118,7 +118,6 @@ function getScriptSize(scriptPath) {
  * Reads options from `package.json`
  */
 function getOptions(pathPrefix = process.cwd()) {
-   
   const pkg = require(path.join(pathPrefix, "package.json"))
 
   return { ...pkg.nextBundleAnalysis, name: pkg.name }

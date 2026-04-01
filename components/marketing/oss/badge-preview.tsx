@@ -27,8 +27,7 @@ export function BadgePreview() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 65%)",
         }}
         aria-hidden="true"
       />
@@ -43,16 +42,13 @@ export function BadgePreview() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left: Copy block */}
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-              Viral distribution
-            </p>
-            <h2 className="mt-3 font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
+            <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Viral distribution</p>
+            <h2 className="font-grotesk text-lit mt-3 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
               Your project&apos;s permanent reputation.
             </h2>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Add a live health badge to your README. Auto-updates on every push.
-              Every README view is an impression — clicking it opens your public
-              health dashboard.
+            <p className="text-muted-foreground mt-4 max-w-md text-sm leading-relaxed">
+              Add a live health badge to your README. Auto-updates on every push. Every README view is an impression —
+              clicking it opens your public health dashboard.
             </p>
           </div>
 
@@ -63,8 +59,7 @@ export function BadgePreview() {
               <div
                 className="pointer-events-none absolute inset-0"
                 style={{
-                  backgroundImage:
-                    "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.12), transparent 60%)",
+                  backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.12), transparent 60%)",
                 }}
                 aria-hidden="true"
               />
@@ -93,18 +88,12 @@ export function BadgePreview() {
                   x="85"
                   y="27"
                   textAnchor="middle"
-                  className="text-[14px] font-sans"
+                  className="font-sans text-[14px]"
                   fill="var(--color-foreground)"
                 >
                   unerr Health
                 </text>
-                <text
-                  x="225"
-                  y="28"
-                  textAnchor="middle"
-                  className="text-[16px] font-bold font-sans"
-                  fill="#FFFFFF"
-                >
+                <text x="225" y="28" textAnchor="middle" className="font-sans text-[16px] font-bold" fill="#FFFFFF">
                   A (92)
                 </text>
               </motion.svg>
@@ -112,25 +101,25 @@ export function BadgePreview() {
 
             {/* Markdown code block */}
             <motion.div
-              className="mt-6 overflow-hidden rounded-lg border border-border bg-background"
+              className="border-border bg-background mt-6 overflow-hidden rounded-lg border"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="flex items-center justify-between border-b border-border/50 px-4 py-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/40">
+              <div className="border-border/50 flex items-center justify-between border-b px-4 py-2">
+                <span className="text-muted-foreground/40 text-[10px] font-semibold tracking-[0.08em] uppercase">
                   README.md
                 </span>
                 <button
                   type="button"
                   onClick={handleCopy}
                   aria-label={copied ? "Copied to clipboard" : "Copy markdown snippet"}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  className="border-border text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors"
                 >
                   {copied ? (
                     <>
-                      <Check className="h-3 w-3 text-success" />
+                      <Check className="text-success h-3 w-3" />
                       Copied!
                     </>
                   ) : (
@@ -142,7 +131,7 @@ export function BadgePreview() {
                 </button>
               </div>
               <div className="overflow-x-auto p-4">
-                <code className="block whitespace-pre font-mono text-[11px] leading-relaxed text-muted-foreground">
+                <code className="text-muted-foreground block font-mono text-[11px] leading-relaxed whitespace-pre">
                   {markdownSnippet}
                 </code>
               </div>

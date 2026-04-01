@@ -26,7 +26,7 @@ export function SiteHeader() {
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
+          ? "border-border/50 bg-background/80 border-b backdrop-blur-xl"
           : "border-b border-transparent bg-transparent"
       }`}
     >
@@ -39,7 +39,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="relative flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground relative flex items-center gap-1 text-sm transition-colors"
             >
               {item.label}
               {item.external && <ExternalLink className="h-3 w-3" />}
@@ -48,7 +48,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => openWaitlist()}
-            className="inline-flex h-8 items-center rounded-full bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-90"
+            className="bg-foreground text-background inline-flex h-8 items-center rounded-full px-4 text-sm font-medium transition-opacity hover:opacity-90"
           >
             Get Started
           </button>
@@ -59,24 +59,21 @@ export function SiteHeader() {
             <button
               type="button"
               aria-label="Open menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground inline-flex h-10 w-10 items-center justify-center rounded-md"
             >
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
           <AnimatePresence>
             {mobileOpen && (
-              <SheetContent
-                side="right"
-                className="flex w-full flex-col bg-background p-0 sm:w-80"
-              >
-                <div className="flex h-16 items-center justify-between border-b border-border px-6">
+              <SheetContent side="right" className="bg-background flex w-full flex-col p-0 sm:w-80">
+                <div className="border-border flex h-16 items-center justify-between border-b px-6">
                   <BrandLogo variant="full" size="md" onClick={() => setMobileOpen(false)} />
                   <SheetClose asChild>
                     <button
                       type="button"
                       aria-label="Close menu"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+                      className="text-muted-foreground hover:text-foreground inline-flex h-10 w-10 items-center justify-center rounded-md"
                     >
                       <X className="h-5 w-5" />
                     </button>
@@ -94,10 +91,10 @@ export function SiteHeader() {
                         href={item.href}
                         {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-foreground transition-colors hover:bg-muted"
+                        className="text-foreground hover:bg-muted flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium transition-colors"
                       >
                         {item.label}
-                        {item.external && <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />}
+                        {item.external && <ExternalLink className="text-muted-foreground h-3.5 w-3.5" />}
                       </Link>
                     </motion.div>
                   ))}
@@ -113,7 +110,7 @@ export function SiteHeader() {
                         setMobileOpen(false)
                         openWaitlist()
                       }}
-                      className="flex h-10 w-full items-center justify-center rounded-lg bg-foreground text-sm font-medium text-background transition-opacity hover:opacity-90"
+                      className="bg-foreground text-background flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
                     >
                       Get Started
                     </button>

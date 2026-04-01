@@ -66,10 +66,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HeroSection />
       <MetricsBar />
       <ProblemSection />
@@ -78,12 +75,11 @@ export default async function HomePage() {
 
       {/* Energy thread — visual connector between bento and pricing */}
       <div className="relative flex h-20 items-center justify-center" aria-hidden="true">
-        <div className="h-full w-px bg-border/20" />
+        <div className="bg-border/20 h-full w-px" />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage:
-              "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 60%)",
+            backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.04), transparent 60%)",
           }}
         />
       </div>

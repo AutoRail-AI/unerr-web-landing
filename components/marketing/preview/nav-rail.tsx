@@ -71,24 +71,24 @@ export function NavRail({ active, onSelect, repo }: NavRailProps) {
   const totalIssues = repo.risks.reduce((s: number, r) => s + r.count, 0)
 
   return (
-    <aside className="hidden w-[200px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex transition-[width] duration-200 ease-in-out">
+    <aside className="border-sidebar-border bg-sidebar hidden w-[200px] shrink-0 flex-col border-r transition-[width] duration-200 ease-in-out md:flex">
       {/* ── Repo Identity Badge (Phase 19: letter badge + status dot) ── */}
       <div className="shrink-0 py-2.5">
         <button
           type="button"
-          className="flex items-center gap-2.5 px-3 w-full text-left transition-colors hover:bg-sidebar-accent/50"
+          className="hover:bg-sidebar-accent/50 flex w-full items-center gap-2.5 px-3 text-left transition-colors"
         >
           {/* Letter badge with status dot overlay */}
           <div className="relative">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sidebar-accent text-[11px] font-bold text-foreground uppercase">
+            <div className="bg-sidebar-accent text-foreground flex h-8 w-8 items-center justify-center rounded-md text-[11px] font-bold uppercase">
               {repo.name.charAt(0)}
             </div>
             {/* Status dot — Phase 19: absolute bottom-right, border-2 border-sidebar */}
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-success" />
+            <span className="border-sidebar bg-success absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-foreground truncate font-grotesk">{repo.name}</p>
-            <p className="text-[10px] text-muted-foreground truncate">ready</p>
+            <p className="text-foreground font-grotesk truncate text-xs font-semibold">{repo.name}</p>
+            <p className="text-muted-foreground truncate text-[10px]">ready</p>
           </div>
         </button>
       </div>
@@ -98,7 +98,7 @@ export function NavRail({ active, onSelect, repo }: NavRailProps) {
         {NAV_GROUPS.map((group, gi) => (
           <div key={gi}>
             {/* Divider between groups — Phase 19: my-1.5 mx-1 border-t border-sidebar-border */}
-            {gi > 0 && <div className="my-1.5 mx-1 border-t border-sidebar-border" />}
+            {gi > 0 && <div className="border-sidebar-border mx-1 my-1.5 border-t" />}
             <div className="space-y-0.5 px-1">
               {group.items.map((item) => {
                 const isActive = item.id === active
@@ -111,7 +111,7 @@ export function NavRail({ active, onSelect, repo }: NavRailProps) {
                     type="button"
                     onClick={() => isClickable && onSelect(item.id as PreviewTab)}
                     className={[
-                      "relative flex w-full items-center gap-2.5 rounded-md px-3 h-7 text-left text-[11px] transition-colors",
+                      "relative flex h-7 w-full items-center gap-2.5 rounded-md px-3 text-left text-[11px] transition-colors",
                       isActive
                         ? "bg-sidebar-accent text-sidebar-foreground"
                         : isClickable
@@ -121,24 +121,28 @@ export function NavRail({ active, onSelect, repo }: NavRailProps) {
                   >
                     {/* Active indicator bar — Phase 19: absolute left-0, w-0.5, rounded-full bg-foreground */}
                     {isActive && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-foreground" />
+                      <span className="bg-foreground absolute top-1.5 bottom-1.5 left-0 w-0.5 rounded-full" />
                     )}
                     <span className="relative">
                       <item.icon className="h-4 w-4 shrink-0" />
                       {/* Pulse dot — Phase 19: only on non-active tabs */}
                       {pulse && pulse.count > 0 && (
-                        <span className={`absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[9px] font-bold text-primary-foreground ${pulse.color}`}>
+                        <span
+                          className={`text-primary-foreground absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[9px] font-bold ${pulse.color}`}
+                        >
                           {pulse.count}
                         </span>
                       )}
                       {pulse && pulse.count === 0 && (
-                        <span className={`absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full animate-pulse ${pulse.color}`} />
+                        <span
+                          className={`absolute -top-0.5 -right-0.5 h-2 w-2 animate-pulse rounded-full ${pulse.color}`}
+                        />
                       )}
                     </span>
                     <span className="truncate">{item.label}</span>
                     {/* Issue count badge */}
                     {item.id === "issues" && totalIssues > 0 && !isActive && (
-                      <span className="ml-auto rounded-full bg-destructive/10 px-1.5 text-[9px] font-medium text-destructive tabular-nums">
+                      <span className="bg-destructive/10 text-destructive ml-auto rounded-full px-1.5 text-[9px] font-medium tabular-nums">
                         {totalIssues}
                       </span>
                     )}
@@ -151,38 +155,38 @@ export function NavRail({ active, onSelect, repo }: NavRailProps) {
       </div>
 
       {/* ── Telemetry Stats (Phase 19: text-[10px] font-mono tabular-nums) ── */}
-      <div className="shrink-0 border-t border-sidebar-border px-3 py-2 space-y-0.5">
-        <div className="flex items-center justify-between text-[10px] font-mono tabular-nums text-muted-foreground">
+      <div className="border-sidebar-border shrink-0 space-y-0.5 border-t px-3 py-2">
+        <div className="text-muted-foreground flex items-center justify-between font-mono text-[10px] tabular-nums">
           <span>Entities</span>
           <span className="text-foreground">{repo.entityCount.toLocaleString()}</span>
         </div>
-        <div className="flex items-center justify-between text-[10px] font-mono tabular-nums text-muted-foreground">
+        <div className="text-muted-foreground flex items-center justify-between font-mono text-[10px] tabular-nums">
           <span>Files</span>
           <span className="text-foreground">{repo.fileCount.toLocaleString()}</span>
         </div>
-        <div className="flex items-center justify-between text-[10px] font-mono tabular-nums text-muted-foreground">
+        <div className="text-muted-foreground flex items-center justify-between font-mono text-[10px] tabular-nums">
           <span>Rules</span>
           <span className="text-foreground">{repo.rules.length}</span>
         </div>
       </div>
 
       {/* ── Primary Actions (Phase 19: SyncNow + Connect IDE) ── */}
-      <div className="shrink-0 px-2 py-1.5 space-y-0.5">
-        <button className="flex items-center w-full gap-2 rounded-md px-3 h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors">
+      <div className="shrink-0 space-y-0.5 px-2 py-1.5">
+        <button className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent flex h-7 w-full items-center gap-2 rounded-md px-3 text-xs transition-colors">
           <RefreshCw className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">Sync Now</span>
         </button>
-        <button className="flex items-center w-full gap-2 rounded-md px-3 h-7 text-xs text-live hover:text-live hover:bg-sidebar-accent transition-colors">
+        <button className="text-live hover:text-live hover:bg-sidebar-accent flex h-7 w-full items-center gap-2 rounded-md px-3 text-xs transition-colors">
           <Plug className="h-3.5 w-3.5 shrink-0 animate-pulse" />
           <span className="truncate">IDE Connected</span>
         </button>
       </div>
 
       {/* ── Collapse toggle (Phase 19: PanelLeftClose/PanelLeftOpen) ── */}
-      <div className="flex items-center justify-end shrink-0 py-1.5 px-2">
+      <div className="flex shrink-0 items-center justify-end px-2 py-1.5">
         <button
           type="button"
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:bg-muted/30 hover:text-foreground flex h-7 w-7 items-center justify-center rounded-md transition-colors"
           aria-label="Collapse navigation"
         >
           <PanelLeftClose className="h-4 w-4" />

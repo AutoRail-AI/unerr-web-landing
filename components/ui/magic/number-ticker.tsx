@@ -51,14 +51,11 @@ export function NumberTicker({
           ref.current.textContent = `${prefix}${Math.round(latest)}${suffix}`
         }
       }),
-    [springValue, prefix, suffix],
+    [springValue, prefix, suffix]
   )
 
   return (
-    <span
-      ref={ref}
-      className={cn("tabular-nums", className)}
-    >
+    <span ref={ref} className={cn("tabular-nums", className)}>
       {prefix}0{suffix}
     </span>
   )

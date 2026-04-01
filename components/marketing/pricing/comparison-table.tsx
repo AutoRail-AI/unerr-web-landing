@@ -68,9 +68,9 @@ const tierColumns = ["Trial *", "Pro", "Startup", "Enterprise"]
 /* ─── Cell Renderer ─────────────────────────────────────────────────────── */
 function Cell({ included }: { included: boolean }) {
   return included ? (
-    <Check className="mx-auto h-4 w-4 text-success" />
+    <Check className="text-success mx-auto h-4 w-4" />
   ) : (
-    <Minus className="mx-auto h-4 w-4 text-muted-foreground/30" />
+    <Minus className="text-muted-foreground/30 mx-auto h-4 w-4" />
   )
 }
 
@@ -108,21 +108,16 @@ export function ComparisonTable() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.05), transparent 65%)",
+          backgroundImage: "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.05), transparent 65%)",
         }}
         aria-hidden="true"
       />
 
       <div ref={tableRef} className="relative mx-auto max-w-7xl">
         {/* Left-aligned heading */}
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent/60">
-          Feature comparison
-        </p>
-        <h2 className="mt-3 font-grotesk text-2xl font-bold tracking-[-0.02em] text-lit sm:text-3xl">
-          Compare plans
-        </h2>
-        <p className="mt-3 max-w-md text-sm text-muted-foreground">
+        <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Feature comparison</p>
+        <h2 className="font-grotesk text-lit mt-3 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">Compare plans</h2>
+        <p className="text-muted-foreground mt-3 max-w-md text-sm">
           * Trial includes full Pro access for 7 days. One repository.
         </p>
 
@@ -130,8 +125,8 @@ export function ComparisonTable() {
           <table className="w-full min-w-[600px] text-sm">
             {/* Sticky header */}
             <thead>
-              <tr className="sticky top-0 z-10 border-b border-border bg-background">
-                <th scope="col" className="py-3 pr-4 text-left font-normal text-muted-foreground">
+              <tr className="border-border bg-background sticky top-0 z-10 border-b">
+                <th scope="col" className="text-muted-foreground py-3 pr-4 text-left font-normal">
                   Feature
                 </th>
                 {tierColumns.map((t) => (
@@ -173,19 +168,15 @@ function GroupRows({ group }: { group: FeatureGroup }) {
     <>
       {/* Group header — enhanced visual treatment */}
       <tr>
-        <th
-          scope="colgroup"
-          colSpan={5}
-          className="pb-2 pt-8 text-left"
-        >
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+        <th scope="colgroup" colSpan={5} className="pt-8 pb-2 text-left">
+          <span className="text-foreground inline-flex items-center gap-2 text-xs font-semibold tracking-[0.08em] uppercase">
             {group.label}
           </span>
         </th>
       </tr>
       {group.features.map((f) => (
-        <tr key={f.name} className="border-b border-border/50 transition-colors hover:bg-muted/30">
-          <td className="py-3 pr-4 text-muted-foreground">{f.name}</td>
+        <tr key={f.name} className="border-border/50 hover:bg-muted/30 border-b transition-colors">
+          <td className="text-muted-foreground py-3 pr-4">{f.name}</td>
           <td className="py-3 text-center">
             <Cell included={f.trial} />
           </td>

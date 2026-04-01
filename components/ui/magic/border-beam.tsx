@@ -23,16 +23,12 @@ export function BorderBeam({
 }: BorderBeamProps) {
   return (
     <div
-      className={cn(
-        "pointer-events-none absolute inset-0 rounded-[inherit]",
-        className,
-      )}
+      className={cn("pointer-events-none absolute inset-0 rounded-[inherit]", className)}
       style={{
         borderWidth,
         borderStyle: "solid",
         borderColor: "transparent",
-        WebkitMask:
-          "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+        WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
         WebkitMaskComposite: "xor",
         maskComposite: "exclude",
         backgroundImage: `conic-gradient(from calc(270deg - (${size} * 0.5deg)), transparent 0%, ${colorFrom} 10%, ${colorTo} 20%, transparent 30%)`,
