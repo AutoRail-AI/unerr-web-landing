@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { ShimmerButton } from "@/components/marketing/shimmer-button"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 
 const staggerContainer: Variants = {
   hidden: { opacity: 0 },
@@ -134,6 +135,7 @@ function ProductAbstract() {
 
 export function OssHero() {
   const prefersReducedMotion = useReducedMotion()
+  const { open: openWaitlist } = useWaitlist()
   return (
     <section className="relative overflow-hidden px-6 pt-28 pb-20 lg:pt-36 lg:pb-28">
       {/* Layer 1 — faint dot grid (matches landing page hero) */}
@@ -208,7 +210,7 @@ export function OssHero() {
 
             {/* Dual CTAs */}
             <motion.div variants={staggerChild} className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-              <ShimmerButton href="/login">Protect Your Project</ShimmerButton>
+              <ShimmerButton onClick={() => openWaitlist("oss")}>Protect Your Project</ShimmerButton>
               <a
                 href="#audit"
                 className="border-border text-foreground hover:border-accent/30 hover:bg-muted focus-visible:ring-accent focus-visible:ring-offset-background inline-flex h-11 items-center gap-1.5 rounded-full border px-6 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"

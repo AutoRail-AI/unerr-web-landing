@@ -7,13 +7,15 @@ import { useEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* ─── Feature Data ──────────────────────────────────────────────────────── */
+/* ─── Feature Data (from docs/product/FIRST_WEEK_WOW.md paywall architecture) ─── */
 interface Feature {
   name: string
-  trial: boolean
-  pro: boolean
-  startup: boolean
-  enterprise: boolean
+  free: boolean | string // string = custom value like "1 repo"
+  oss: boolean | string
+  pro: boolean | string
+  proPlus: boolean | string
+  startup: boolean | string
+  enterprise: boolean | string
 }
 
 interface FeatureGroup {
@@ -23,51 +25,82 @@ interface FeatureGroup {
 
 const groups: FeatureGroup[] = [
   {
-    label: "Core Intelligence",
+    label: "Insights (Free for All)",
     features: [
-      { name: "Knowledge graph indexing", trial: true, pro: true, startup: true, enterprise: true },
-      { name: "13-type health audit", trial: true, pro: true, startup: true, enterprise: true },
-      { name: "Blast radius analysis", trial: true, pro: true, startup: true, enterprise: true },
-      { name: "MCP server integration", trial: true, pro: true, startup: true, enterprise: true },
-      { name: "Semantic embeddings", trial: true, pro: true, startup: true, enterprise: true },
+      { name: "Knowledge graph indexing", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "13-type health audit + grade", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Blast radius maps", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Ghost Report email", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Dead code / duplication detection", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Convention violations list", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "AI contribution summary", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
     ],
   },
   {
-    label: "AI Features",
+    label: "MCP Context",
     features: [
-      { name: "AI PR review", trial: true, pro: true, startup: true, enterprise: true },
-      { name: "Architectural rules engine", trial: false, pro: true, startup: true, enterprise: true },
-      { name: "Prompt ledger & rewind", trial: false, pro: true, startup: true, enterprise: true },
-      { name: "Knowledge sync (doc validation)", trial: false, pro: true, startup: true, enterprise: true },
-      { name: "Speculative ontology", trial: false, pro: true, startup: true, enterprise: true },
+      { name: "Basic file-level info", free: true, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Full graph context (edges, blast radius)", free: false, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Justifications & anti-patterns", free: false, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "50+ MCP tools", free: false, oss: true, pro: true, proPlus: true, startup: true, enterprise: true },
     ],
   },
   {
-    label: "Team Features",
+    label: "Actions (Pro+)",
     features: [
-      { name: "Team dashboards", trial: false, pro: false, startup: true, enterprise: true },
-      { name: "Shared rules library", trial: false, pro: false, startup: true, enterprise: true },
-      { name: "Slack notifications", trial: false, pro: false, startup: true, enterprise: true },
-      { name: "Seat management", trial: false, pro: false, startup: true, enterprise: true },
+      { name: "Rewind (rollback AI damage)", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Auto-correction", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Rules engine", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Drift alerts (Slack/email)", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Prompt ledger", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Atlas Ask (unlimited)", free: false, oss: false, pro: true, proPlus: true, startup: true, enterprise: true },
+      { name: "Priority indexing", free: false, oss: false, pro: false, proPlus: true, startup: true, enterprise: true },
+    ],
+  },
+  {
+    label: "Team",
+    features: [
+      { name: "Shared rule libraries", free: false, oss: false, pro: false, proPlus: false, startup: true, enterprise: true },
+      { name: "Team health dashboard", free: false, oss: false, pro: false, proPlus: false, startup: true, enterprise: true },
+      { name: "Cross-repo search", free: false, oss: false, pro: false, proPlus: false, startup: true, enterprise: true },
+      { name: "Org-level conventions", free: false, oss: false, pro: false, proPlus: false, startup: true, enterprise: true },
     ],
   },
   {
     label: "Enterprise",
     features: [
-      { name: "SSO / SAML", trial: false, pro: false, startup: false, enterprise: true },
-      { name: "Self-hosted deployment", trial: false, pro: false, startup: false, enterprise: true },
-      { name: "Dedicated support", trial: false, pro: false, startup: false, enterprise: true },
-      { name: "Custom SLA", trial: false, pro: false, startup: false, enterprise: true },
-      { name: "Audit logs", trial: false, pro: false, startup: false, enterprise: true },
+      { name: "SSO / SAML", free: false, oss: false, pro: false, proPlus: false, startup: false, enterprise: true },
+      { name: "Compliance mapping", free: false, oss: false, pro: false, proPlus: false, startup: false, enterprise: true },
+      { name: "Air-gapped deployment", free: false, oss: false, pro: false, proPlus: false, startup: false, enterprise: true },
+      { name: "Audit trail", free: false, oss: false, pro: false, proPlus: false, startup: false, enterprise: true },
+      { name: "Dedicated support & SLA", free: false, oss: false, pro: false, proPlus: false, startup: false, enterprise: true },
+    ],
+  },
+  {
+    label: "Limits",
+    features: [
+      { name: "Repositories", free: "1", oss: "Unlimited (public)", pro: "3", proPlus: "10", startup: "Unlimited", enterprise: "Unlimited" },
+      { name: "LOC per repo", free: "—", oss: "Unlimited", pro: "50K", proPlus: "200K", startup: "500K", enterprise: "Unlimited" },
+      { name: "Seats", free: "1", oss: "Unlimited", pro: "1", proPlus: "1", startup: "3–20", enterprise: "Unlimited" },
     ],
   },
 ]
 
-const tierColumns = ["Trial *", "Pro", "Startup", "Enterprise"]
+const tierColumns = [
+  { key: "free", label: "Free Trial" },
+  { key: "oss", label: "OSS" },
+  { key: "pro", label: "Pro" },
+  { key: "proPlus", label: "Pro+" },
+  { key: "startup", label: "Startup" },
+  { key: "enterprise", label: "Enterprise" },
+]
 
 /* ─── Cell Renderer ─────────────────────────────────────────────────────── */
-function Cell({ included }: { included: boolean }) {
-  return included ? (
+function Cell({ value }: { value: boolean | string }) {
+  if (typeof value === "string") {
+    return <span className="text-foreground text-xs font-medium">{value}</span>
+  }
+  return value ? (
     <Check className="text-success mx-auto h-4 w-4" />
   ) : (
     <Minus className="text-muted-foreground/30 mx-auto h-4 w-4" />
@@ -104,7 +137,6 @@ export function ComparisonTable() {
 
   return (
     <section className="relative overflow-hidden px-6 py-24">
-      {/* Atmospheric glow — intensifying toward conversion */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -114,16 +146,15 @@ export function ComparisonTable() {
       />
 
       <div ref={tableRef} className="relative mx-auto max-w-7xl">
-        {/* Left-aligned heading */}
         <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Feature comparison</p>
         <h2 className="font-grotesk text-lit mt-3 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">Compare plans</h2>
-        <p className="text-muted-foreground mt-3 max-w-md text-sm">
-          * Trial includes full Pro access for 7 days. One repository.
+        <p className="text-muted-foreground mt-3 max-w-lg text-sm">
+          Insights are always free — health grades, blast radius maps, and Ghost Reports never get paywalled.
+          Actions (Rewind, auto-correction, rules enforcement) require Pro.
         </p>
 
         <div className="mt-12 overflow-x-auto">
-          <table className="w-full min-w-[600px] text-sm">
-            {/* Sticky header */}
+          <table className="w-full min-w-[800px] text-sm">
             <thead>
               <tr className="border-border bg-background sticky top-0 z-10 border-b">
                 <th scope="col" className="text-muted-foreground py-3 pr-4 text-left font-normal">
@@ -131,13 +162,13 @@ export function ComparisonTable() {
                 </th>
                 {tierColumns.map((t) => (
                   <th
-                    key={t}
+                    key={t.key}
                     scope="col"
-                    className={`w-[120px] py-3 text-center font-semibold ${
-                      t === "Pro" ? "bg-accent/5 text-accent" : "text-foreground"
+                    className={`w-[100px] py-3 text-center text-xs font-semibold ${
+                      t.key === "pro" ? "bg-accent/5 text-accent" : "text-foreground"
                     }`}
                   >
-                    {t}
+                    {t.label}
                   </th>
                 ))}
               </tr>
@@ -151,7 +182,6 @@ export function ComparisonTable() {
         </div>
       </div>
 
-      {/* Bottom fade */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
         style={{
@@ -166,9 +196,8 @@ export function ComparisonTable() {
 function GroupRows({ group }: { group: FeatureGroup }) {
   return (
     <>
-      {/* Group header — enhanced visual treatment */}
       <tr>
-        <th scope="colgroup" colSpan={5} className="pt-8 pb-2 text-left">
+        <th scope="colgroup" colSpan={7} className="pt-8 pb-2 text-left">
           <span className="text-foreground inline-flex items-center gap-2 text-xs font-semibold tracking-[0.08em] uppercase">
             {group.label}
           </span>
@@ -177,18 +206,12 @@ function GroupRows({ group }: { group: FeatureGroup }) {
       {group.features.map((f) => (
         <tr key={f.name} className="border-border/50 hover:bg-muted/30 border-b transition-colors">
           <td className="text-muted-foreground py-3 pr-4">{f.name}</td>
-          <td className="py-3 text-center">
-            <Cell included={f.trial} />
-          </td>
-          <td className="bg-accent/5 py-3 text-center">
-            <Cell included={f.pro} />
-          </td>
-          <td className="py-3 text-center">
-            <Cell included={f.startup} />
-          </td>
-          <td className="py-3 text-center">
-            <Cell included={f.enterprise} />
-          </td>
+          <td className="py-3 text-center"><Cell value={f.free} /></td>
+          <td className="py-3 text-center"><Cell value={f.oss} /></td>
+          <td className="bg-accent/5 py-3 text-center"><Cell value={f.pro} /></td>
+          <td className="py-3 text-center"><Cell value={f.proPlus} /></td>
+          <td className="py-3 text-center"><Cell value={f.startup} /></td>
+          <td className="py-3 text-center"><Cell value={f.enterprise} /></td>
         </tr>
       ))}
     </>

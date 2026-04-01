@@ -1,13 +1,11 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { type ReactNode, useEffect } from "react"
+import { useTrackPageTime, useTrackScrollDepth } from "@/lib/analytics/hooks"
 import { WaitlistProvider } from "@/components/marketing/waitlist-dialog"
 
-/* ─── Force Dark Theme for Marketing ─────────────────────────────────────
-   Marketing pages are always dark (Substrate Dark aesthetic).
-   Directly manipulates <html> class to avoid persisting to localStorage,
-   so the dashboard's user-chosen theme is never overwritten.
-   ────────────────────────────────────────────────────────────────────── */
+/* ─── Force Dark Theme for Marketing ───────────────────────────────────── */
 
 function ForceMarketingTheme() {
   useEffect(() => {
@@ -20,11 +18,21 @@ function ForceMarketingTheme() {
   return null
 }
 
-/* ─── Marketing Providers Wrapper ───────────────────────────────────────── */
+/* ─── Page-Level Analytics ─────────────────────────────────────────────── */
+
+function PageAnalytics() {
+  const pathname = usePathname()
+  useTrackPageTime(pathname)
+  useTrackScrollDepth(pathname)
+  return null
+}
+
+/* ─── Marketing Providers Wrapper ──────────────────────────────────────── */
 export function MarketingProviders({ children }: { children: ReactNode }) {
   return (
     <WaitlistProvider>
       <ForceMarketingTheme />
+      <PageAnalytics />
       {children}
     </WaitlistProvider>
   )

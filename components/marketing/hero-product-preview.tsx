@@ -11,6 +11,8 @@ import { NavRail } from "./preview/nav-rail"
 import { OverviewView } from "./preview/overview-view"
 import type { PreviewTab } from "./preview/types"
 import { gradeColor, repos } from "./preview-data"
+import { useWaitlist } from "./waitlist-dialog"
+import { trackPreviewRepoSelected, trackPreviewTabChange } from "@/lib/analytics/events"
 
 /* ─── Mobile tab bar items ─── */
 
@@ -23,8 +25,13 @@ const TABS = [
 /* ─── Main Component ─── */
 
 export function HeroProductPreview() {
+  const { open: openWaitlist } = useWaitlist()
   const [selectedSlug, setSelectedSlug] = useState("vercel/next.js")
-  const [activeTab, setActiveTab] = useState<PreviewTab>("overview")
+  const [activeTab, setActiveTabRaw] = useState<PreviewTab>("overview")
+  const setActiveTab = useCallback((tab: PreviewTab) => {
+    setActiveTabRaw(tab)
+    trackPreviewTabChange(tab)
+  }, [])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [inputValue, setInputValue] = useState("")
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -55,6 +62,7 @@ export function HeroProductPreview() {
       setShowSuggestions(false)
       setHighlightedIdx(-1)
       setIsAnalyzing(true)
+      trackPreviewRepoSelected(slug)
       analyzeTimer.current = setTimeout(() => setIsAnalyzing(false), 2200)
     },
     [selectedSlug]
@@ -168,13 +176,14 @@ export function HeroProductPreview() {
                   </button>
                 ))}
                 {isUnknownRepo && (
-                  <a
-                    href="/login"
-                    className="text-accent hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors"
+                  <button
+                    type="button"
+                    onClick={() => openWaitlist("general")}
+                    className="text-accent hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors"
                   >
-                    Sign up to analyze <span className="text-foreground font-mono">{inputValue}</span>
+                    Join waitlist to analyze <span className="text-foreground font-mono">{inputValue}</span>
                     <span className="ml-auto">&rarr;</span>
-                  </a>
+                  </button>
                 )}
               </motion.div>
             )}

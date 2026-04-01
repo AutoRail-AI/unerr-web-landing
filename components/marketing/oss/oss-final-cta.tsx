@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { ShimmerButton } from "@/components/marketing/shimmer-button"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
 import { AnimatedGridPattern } from "@/components/ui/magic/animated-grid"
 
 const fadeUp: Variants = {
@@ -17,6 +18,7 @@ const proofPoints = [
 
 export function OssFinalCta() {
   const prefersReducedMotion = useReducedMotion()
+  const { open: openWaitlist } = useWaitlist()
   return (
     <section className="relative overflow-hidden px-6 py-28">
       <AnimatedGridPattern
@@ -64,7 +66,7 @@ export function OssFinalCta() {
         </div>
 
         <div className="mt-8">
-          <ShimmerButton href="/login">Protect Your Project</ShimmerButton>
+          <ShimmerButton onClick={() => openWaitlist("oss")}>Protect Your Project</ShimmerButton>
         </div>
 
         <p className="text-muted-foreground/60 mt-6 text-[11px] font-medium tracking-[0.08em] uppercase">

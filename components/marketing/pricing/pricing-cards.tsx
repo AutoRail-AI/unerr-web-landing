@@ -2,80 +2,124 @@
 
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Check } from "lucide-react"
-import Link from "next/link"
-import posthog from "posthog-js"
+import { Check, Heart } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { BorderBeam } from "@/components/ui/magic/border-beam"
+import { useWaitlist } from "@/components/marketing/waitlist-dialog"
+import { trackBillingToggle, trackPricingCtaClick } from "@/lib/analytics/events"
 
 gsap.registerPlugin(ScrollTrigger)
 
-/* ─── Tier Data ─────────────────────────────────────────────────────────── */
+/* ─── Tier Data (from docs/product/) ────────────────────────────────────── */
 interface Tier {
   name: string
   tagline: string
   monthlyPrice: number | null // null = custom
+  annualPrice: number | null // null = custom
+  priceLabel?: string // override for display (e.g. "$30/seat")
+  priceSuffix?: string // override suffix
+  badge?: string
   features: string[]
-  cta: { label: string; href: string }
+  limits?: string
+  cta: { label: string; action: "waitlist-general" | "waitlist-oss" | "email" }
   highlighted?: boolean
 }
 
 const tiers: Tier[] = [
   {
-    name: "Trial",
-    tagline: "7 days, full access",
+    name: "Free Trial",
+    tagline: "7 days, full product access",
     monthlyPrice: 0,
+    annualPrice: 0,
     features: [
       "Full knowledge graph",
       "13-type health audit",
-      "MCP server integration",
+      "MCP server — full context",
       "Blast radius PR review",
-      "1 repository",
+      "Rewind & auto-correction",
     ],
-    cta: { label: "Start Free Trial", href: "/login" },
+    limits: "1 repo · 7 days",
+    cta: { label: "Join Waitlist", action: "waitlist-general" },
+  },
+  {
+    name: "OSS Guardian",
+    tagline: "Free forever for open source",
+    monthlyPrice: 0,
+    annualPrice: 0,
+    badge: "Forever Free",
+    features: [
+      "Full product on public repos",
+      "Health badge for README",
+      "PR review on every push",
+      "Unlimited contributor seats",
+      "50+ MCP tools",
+    ],
+    limits: "Unlimited public repos",
+    cta: { label: "Apply for OSS", action: "waitlist-oss" },
   },
   {
     name: "Pro",
-    tagline: "Safe Velocity",
+    tagline: "Individual developers",
     monthlyPrice: 20,
+    annualPrice: 192,
     features: [
-      "Everything in Trial",
-      "Unlimited repositories",
-      "Architectural rules engine",
-      "Prompt ledger & rewind",
-      "Knowledge sync",
-      "Priority indexing",
+      "Full Causal Substrate",
+      "Unlimited Rewind",
+      "Blast Radius + Ledger",
+      "Rules Engine",
+      "50+ MCP tools",
+      "Unlimited Atlas Ask",
     ],
-    cta: { label: "Get Started", href: "/login" },
+    limits: "3 repos · 50K LOC each",
+    cta: { label: "Join Waitlist", action: "waitlist-general" },
     highlighted: true,
   },
   {
-    name: "Startup",
-    tagline: "Growing Teams",
-    monthlyPrice: 15,
+    name: "Pro+",
+    tagline: "Power users, larger projects",
+    monthlyPrice: 35,
+    annualPrice: 336,
     features: [
       "Everything in Pro",
-      "3–20 seats",
-      "Team dashboards",
-      "Shared rules library",
-      "Slack notifications",
-      "Volume discount",
+      "Priority indexing",
+      "Higher LOC limits",
+      "10 repositories",
     ],
-    cta: { label: "Get Started", href: "/login" },
+    limits: "10 repos · 200K LOC each",
+    cta: { label: "Join Waitlist", action: "waitlist-general" },
+  },
+  {
+    name: "Startup",
+    tagline: "Growing teams (2–20 seats)",
+    monthlyPrice: 30,
+    annualPrice: 288,
+    priceLabel: "$30",
+    priceSuffix: " / seat / mo",
+    features: [
+      "Everything in Pro",
+      "Shared rule libraries",
+      "Team health dashboard",
+      "Cross-repo search",
+      "Org-level conventions",
+    ],
+    limits: "3-seat min · Unlimited repos · 500K LOC each",
+    cta: { label: "Join Waitlist", action: "waitlist-general" },
   },
   {
     name: "Enterprise",
-    tagline: "Custom Infrastructure",
+    tagline: "Custom infrastructure & compliance",
     monthlyPrice: null,
+    annualPrice: null,
     features: [
       "Everything in Startup",
-      "Unlimited seats",
       "SSO / SAML",
-      "Self-hosted option",
-      "Dedicated support",
-      "Custom SLA",
+      "Compliance mapping",
+      "Prompt ledger + audit trail",
+      "Air-gapped deployment",
+      "Dedicated support & SLA",
     ],
-    cta: { label: "Contact Us", href: "mailto:hello@unerr.dev" },
+    limits: "Unlimited everything",
+    cta: { label: "Contact Us", action: "email" },
   },
 ]
 
@@ -83,6 +127,14 @@ const tiers: Tier[] = [
 export function PricingCards() {
   const [annual, setAnnual] = useState(false)
   const cardsRef = useRef<HTMLDivElement>(null)
+  const { open: openWaitlist } = useWaitlist()
+
+  function handleCta(tier: Tier) {
+    trackPricingCtaClick(tier.name, annual ? "annual" : "monthly")
+    if (tier.cta.action === "waitlist-general") openWaitlist("general")
+    else if (tier.cta.action === "waitlist-oss") openWaitlist("oss")
+    else if (tier.cta.action === "email") window.location.href = "mailto:hello@unerr.dev"
+  }
 
   useEffect(() => {
     if (!cardsRef.current) return
@@ -113,21 +165,26 @@ export function PricingCards() {
     return () => ctx.revert()
   }, [])
 
-  function formatPrice(monthly: number | null): string {
-    if (monthly === null) return "Custom"
-    if (monthly === 0) return "$0"
-    if (annual) return `$${Math.round(monthly * 12 * 0.8)}`
-    return `$${monthly}`
+  function formatPrice(tier: Tier): string {
+    if (tier.monthlyPrice === null) return "Custom"
+    if (tier.monthlyPrice === 0) return "$0"
+    if (tier.priceLabel) {
+      if (annual && tier.annualPrice) return `$${Math.round(tier.annualPrice / 12)}`
+      return tier.priceLabel
+    }
+    if (annual && tier.annualPrice) return `$${Math.round(tier.annualPrice / 12)}`
+    return `$${tier.monthlyPrice}`
   }
 
-  function priceSuffix(monthly: number | null): string {
-    if (monthly === null || monthly === 0) return ""
-    return annual ? " / year" : " / mo"
+  function priceSuffix(tier: Tier): string {
+    if (tier.monthlyPrice === null || tier.monthlyPrice === 0) return ""
+    if (tier.priceSuffix) return tier.priceSuffix
+    return annual ? " / mo (billed yearly)" : " / mo"
   }
 
   return (
     <section className="relative overflow-hidden px-6 pt-28 pb-20 lg:pt-36 lg:pb-28">
-      {/* Layer 1 — faint dot grid (matches landing page hero) */}
+      {/* Background layers */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -137,8 +194,6 @@ export function PricingCards() {
         }}
         aria-hidden="true"
       />
-
-      {/* Layer 2 — structural line grid */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -149,8 +204,6 @@ export function PricingCards() {
         }}
         aria-hidden="true"
       />
-
-      {/* Layer 3 — radial violet glow */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -161,27 +214,24 @@ export function PricingCards() {
       />
 
       <div className="relative z-10 mx-auto max-w-7xl">
-        {/* Left-aligned header */}
+        {/* Header */}
         <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="text-center lg:text-left">
             <p className="text-accent/60 text-[10px] font-semibold tracking-[0.12em] uppercase">Pricing</p>
             <h1 className="font-grotesk text-lit mt-3 text-3xl font-bold tracking-[-0.02em] sm:text-4xl md:text-5xl">
-              Infrastructure-tier pricing
+              Flat-rate. No credits. No surprises.
             </h1>
             <p className="text-muted-foreground mt-4 max-w-lg text-base md:text-lg">
-              Start free. Scale with your team. Open source is always free.
+              Insights are free. Actions are Pro. Open source is always free.
             </p>
           </div>
 
-          {/* Billing toggle — right-aligned on desktop */}
+          {/* Billing toggle */}
           <div className="border-border-strong bg-muted/30 inline-flex items-center gap-3 rounded-full border p-1">
             <button
               type="button"
               aria-pressed={!annual}
-              onClick={() => {
-                setAnnual(false)
-                posthog.capture("pricing_billing_cycle_changed", { cycle: "monthly" })
-              }}
+              onClick={() => { setAnnual(false); trackBillingToggle("monthly") }}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 !annual
                   ? "bg-background text-foreground border-border-strong border shadow-sm"
@@ -193,10 +243,7 @@ export function PricingCards() {
             <button
               type="button"
               aria-pressed={annual}
-              onClick={() => {
-                setAnnual(true)
-                posthog.capture("pricing_billing_cycle_changed", { cycle: "annual" })
-              }}
+              onClick={() => { setAnnual(true); trackBillingToggle("annual") }}
               className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 annual
                   ? "bg-background text-foreground border-border-strong border shadow-sm"
@@ -211,8 +258,8 @@ export function PricingCards() {
           </div>
         </div>
 
-        {/* Cards */}
-        <div ref={cardsRef} className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Cards — 3 columns on desktop, top row: Trial + OSS + Pro, bottom row: Pro+ + Startup + Enterprise */}
+        <div ref={cardsRef} className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -220,8 +267,8 @@ export function PricingCards() {
                 tier.highlighted ? "border-accent shadow-glow-accent" : "border-border-strong bg-card"
               }`}
             >
-              {/* BorderBeam on highlighted card */}
               {tier.highlighted && <BorderBeam duration={13} size={200} colorFrom="#8B5CF6" colorTo="#7C3AED" />}
+
               <div className="flex items-center justify-between">
                 <h3
                   className={`font-grotesk text-base font-semibold ${
@@ -230,24 +277,35 @@ export function PricingCards() {
                 >
                   {tier.name}
                 </h3>
-                {/* "Most Popular" badge */}
                 {tier.highlighted && (
                   <span className="bg-accent/10 text-accent rounded-full px-2.5 py-0.5 text-[10px] font-medium">
                     Most Popular
                   </span>
                 )}
+                {tier.badge && (
+                  <span className="bg-success/10 text-success inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-medium">
+                    <Heart className="h-2.5 w-2.5" />
+                    {tier.badge}
+                  </span>
+                )}
               </div>
               <p className="text-muted-foreground mt-0.5 text-xs">{tier.tagline}</p>
 
+              {/* Price */}
               <div className="mt-4">
                 <span className="font-grotesk text-foreground text-3xl font-bold">
-                  {formatPrice(tier.monthlyPrice)}
+                  {formatPrice(tier)}
                 </span>
-                <span className="text-muted-foreground ml-1 text-sm">{priceSuffix(tier.monthlyPrice)}</span>
+                <span className="text-muted-foreground ml-1 text-sm">{priceSuffix(tier)}</span>
               </div>
 
+              {/* Limits pill */}
+              {tier.limits && (
+                <p className="text-muted-foreground/70 mt-1.5 text-[11px]">{tier.limits}</p>
+              )}
+
               {/* Features */}
-              <div className="mt-6 flex-1 space-y-2.5">
+              <div className="mt-5 flex-1 space-y-2.5">
                 {tier.features.map((f) => (
                   <div key={f} className="flex items-start gap-2">
                     <Check className="text-success mt-0.5 h-3.5 w-3.5 shrink-0" />
@@ -257,15 +315,9 @@ export function PricingCards() {
               </div>
 
               {/* CTA */}
-              <Link
-                href={tier.cta.href}
-                onClick={() =>
-                  posthog.capture("pricing_cta_clicked", {
-                    tier: tier.name,
-                    cta_label: tier.cta.label,
-                    billing_cycle: annual ? "annual" : "monthly",
-                  })
-                }
+              <button
+                type="button"
+                onClick={() => handleCta(tier)}
                 className={`mt-6 flex h-9 items-center justify-center rounded-lg text-sm font-medium transition-opacity ${
                   tier.highlighted
                     ? "bg-accent-fade text-primary-foreground hover:opacity-90"
@@ -273,9 +325,20 @@ export function PricingCards() {
                 }`}
               >
                 {tier.cta.label}
-              </Link>
+              </button>
             </div>
           ))}
+        </div>
+
+        {/* Enterprise pilot callout */}
+        <div className="border-border-strong bg-card mt-8 rounded-2xl border p-6 text-center">
+          <p className="text-muted-foreground text-sm">
+            <span className="text-foreground font-medium">Enterprise pilot:</span>{" "}
+            $2,000 flat for a 60-day POC with 10 seats. Converts to $99–149/seat/mo.{" "}
+            <a href="mailto:hello@unerr.dev" className="text-accent hover:underline">
+              Get in touch
+            </a>
+          </p>
         </div>
       </div>
 

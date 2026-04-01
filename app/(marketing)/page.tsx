@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/marketing/how-it-works"
 import { MetricsBar } from "@/components/marketing/metrics-bar"
 import { PricingPreview } from "@/components/marketing/pricing-preview"
 import { ProblemSection } from "@/components/marketing/problem-section"
+import { TrackedSection } from "@/components/marketing/tracked-section"
 
 const terminalCode = `$ npx @autorail/unerr setup
 ✓ Detected Cursor IDE
@@ -67,11 +68,21 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <HeroSection />
-      <MetricsBar />
-      <ProblemSection />
-      <HowItWorks terminalHtml={terminalHtml} />
-      <BentoGrid />
+      <TrackedSection name="hero">
+        <HeroSection />
+      </TrackedSection>
+      <TrackedSection name="metrics">
+        <MetricsBar />
+      </TrackedSection>
+      <TrackedSection name="problem">
+        <ProblemSection />
+      </TrackedSection>
+      <TrackedSection name="how-it-works">
+        <HowItWorks terminalHtml={terminalHtml} />
+      </TrackedSection>
+      <TrackedSection name="features">
+        <BentoGrid />
+      </TrackedSection>
 
       {/* Energy thread — visual connector between bento and pricing */}
       <div className="relative flex h-20 items-center justify-center" aria-hidden="true">
@@ -84,8 +95,12 @@ export default async function HomePage() {
         />
       </div>
 
-      <PricingPreview />
-      <FinalCta />
+      <TrackedSection name="pricing-preview">
+        <PricingPreview />
+      </TrackedSection>
+      <TrackedSection name="final-cta">
+        <FinalCta />
+      </TrackedSection>
     </div>
   )
 }
