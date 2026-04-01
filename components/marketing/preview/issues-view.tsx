@@ -15,7 +15,7 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { Check, Search, Shield, Sparkles, X } from "lucide-react"
 import { useEffect, useState } from "react"
-import { SEVERITY_COLORS, type PreviewRepo } from "../preview-data"
+import { type PreviewRepo, SEVERITY_COLORS } from "../preview-data"
 
 const SEVERITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 }
 

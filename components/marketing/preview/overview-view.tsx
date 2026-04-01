@@ -8,11 +8,11 @@
  * Pattern A layout: h-full overflow-y-auto > mx-auto max-w-[1800px] p-6 space-y-6.
  */
 
-import { ArrowRight, BookOpen, Brain, FileCode, GitPullRequestArrow, Play, Shield } from "lucide-react"
 import { motion } from "framer-motion"
-import { gradeColor, gradeLabel, gradeRoast, SEVERITY_COLORS, type PreviewRepo } from "../preview-data"
+import { ArrowRight, BookOpen, Brain, FileCode, GitPullRequestArrow, Play, Shield } from "lucide-react"
 import { GradeRing } from "./grade-ring"
 import { SectionCard } from "./section-card"
+import { gradeColor, gradeLabel, gradeRoast, type PreviewRepo, SEVERITY_COLORS } from "../preview-data"
 
 interface OverviewViewProps {
   repo: PreviewRepo

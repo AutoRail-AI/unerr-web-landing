@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/db/prisma"
 import { trackEvent } from "@/lib/analytics/posthog"
+import { prisma } from "@/lib/db/prisma"
 
 export async function POST(request: Request) {
   try {

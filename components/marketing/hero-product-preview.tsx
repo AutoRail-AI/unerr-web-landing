@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, CircleAlert, LayoutDashboard, Search } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { gradeColor, repos } from "./preview-data"
 import { AnalyzingOverlay } from "./preview/analyzing-overlay"
 import { DocsView } from "./preview/docs-view"
 import { FocusBar } from "./preview/focus-bar"
@@ -11,6 +10,7 @@ import { IssuesView } from "./preview/issues-view"
 import { NavRail } from "./preview/nav-rail"
 import { OverviewView } from "./preview/overview-view"
 import type { PreviewTab } from "./preview/types"
+import { gradeColor, repos } from "./preview-data"
 
 /* ─── Mobile tab bar items ─── */
 

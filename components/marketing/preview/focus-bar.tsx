@@ -8,8 +8,8 @@
  */
 
 import { ChevronRight, Lightbulb } from "lucide-react"
-import type { PreviewRepo } from "../preview-data"
 import type { PreviewTab } from "./types"
+import type { PreviewRepo } from "../preview-data"
 
 const TAB_LABELS: Record<string, string> = {
   overview: "Overview",

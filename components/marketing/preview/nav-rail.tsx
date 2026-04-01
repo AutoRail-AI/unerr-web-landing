@@ -25,9 +25,9 @@ import {
   Settings2,
   Shield,
 } from "lucide-react"
+import type { PreviewTab } from "./types"
 import { gradeColor } from "../preview-data"
 import type { PreviewRepo } from "../preview-data"
-import type { PreviewTab } from "./types"
 
 const NAV_GROUPS = [
   {
