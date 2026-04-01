@@ -57,16 +57,20 @@ All marketing components use Framer Motion + GSAP for animations. They respect `
 ### Magic UI Components (`components/ui/magic/`)
 Reusable animated components: `border-beam`, `magic-card`, `number-ticker`, `animated-grid`, `dot-pattern`, `ripple`, `spotlight`.
 
-### Database
-- **Prisma** (`lib/db/prisma.ts`): Used by Better Auth for auth. Connects to Supabase PostgreSQL.
-- No MongoDB/Mongoose — all application data goes through Supabase via Prisma.
+### Database & Auth Architecture
+Both this repo and kap10-server share a **single Supabase PostgreSQL database** (us-east-1) with schema-level isolation:
+- **kap10-server**: `public` schema (Better Auth via `pg` Pool with `search_path=public`) + `unerr` schema (app tables via Prisma)
+- **unerr-web-landing**: `landing` schema (Better Auth + app tables via Prisma `multiSchema`)
+- Each app has its own `BETTER_AUTH_SECRET` — session cookies are not interchangeable.
+- Same `SUPABASE_DB_URL`, different schemas, zero conflicts.
+- **Prisma** (`lib/db/prisma.ts`): All models use `@@schema("landing")`. Connects to Supabase PostgreSQL.
+- **Migrations**: `prisma/migrations/` committed to git. `prisma migrate deploy` runs as Fly.io release command on every deploy.
+- No MongoDB/Mongoose, no Redis, no BullMQ — this repo is intentionally lightweight.
 
 ### Auth Flow
 - Better Auth configured in `lib/auth/`. Protected routes in `proxy.ts`.
 - `proxy.ts` (NOT `middleware.ts`) — Next.js 16 route protection.
-
-### Background Job Processing
-BullMQ + Redis. Pre-configured queues: `email` (5 concurrency), `processing` (3), `webhooks` (10). Queue helpers: `queueEmail()`, `queueProcessing()`, `queueWebhook()` from `@/lib/queue`. Add job types in `lib/queue/types.ts`, processors in `lib/queue/workers.ts`.
+- Auth on this site is for **admin users only** (internal team). Platform user auth lives in kap10-server.
 
 ### Environment Variables
 Validated via T3 Env (`env.mjs`) with Zod schemas. Add new env vars there.

@@ -104,21 +104,35 @@ styles/
 └── tailwind.css          # Design tokens
 ```
 
-## Database
+## Database & Auth Architecture
 
-This repo shares a Supabase PostgreSQL instance with the main app (kap10-server). Schema isolation:
+Both this landing site and the main app (kap10-server) share a **single Supabase PostgreSQL database** (us-east-1) but are fully isolated via PostgreSQL schema separation:
 
-| App | Postgres Schema | Purpose |
-|-----|----------------|---------|
-| kap10-server | `public` + `unerr` | Auth + app tables |
-| unerr-web-landing | `landing` | Landing page auth, waitlist, orgs |
+| App | Postgres Schema | Auth Users | Purpose |
+|-----|----------------|------------|---------|
+| **kap10-server** | `public` + `unerr` | Platform users (developers) | Main product — code intelligence |
+| **unerr-web-landing** | `landing` | Admin users (internal team) | Marketing site + admin dashboard |
 
-Prisma uses the `multiSchema` preview feature. All models map to `@@schema("landing")`.
+### How isolation works
+
+- **kap10-server** uses `pg` Pool with `search_path=public`, so Better Auth creates `public.user`, `public.session`, etc.
+- **unerr-web-landing** uses Prisma with `multiSchema` preview feature. Every model has `@@schema("landing")`, so Better Auth creates `landing.user`, `landing.session`, etc.
+- Each app has its own `BETTER_AUTH_SECRET` — session cookies are not interchangeable between apps.
+- Same `SUPABASE_DB_URL` connection string, different schemas, zero table conflicts.
+
+### Migrations
+
+Migrations are managed via Prisma Migrate. On Fly.io deploys, `prisma migrate deploy` runs automatically as a release command.
 
 ```bash
-pnpm prisma db push    # push schema to Supabase
-pnpm prisma generate   # regenerate client
+# Development: create a new migration
+pnpm prisma migrate dev --name describe_the_change
+
+# Production: applied automatically via fly.toml release_command
+# Manual: pnpm prisma migrate deploy
 ```
+
+Migration files live in `prisma/migrations/` and must be committed to git.
 
 ## Design System
 
@@ -175,6 +189,7 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full setup guide.
 
 ## Documentation
 
+- [docs/DATABASE_ARCHITECTURE.md](docs/DATABASE_ARCHITECTURE.md) — Database schema isolation, auth separation, migrations
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deployment guide (Fly.io, Docker, CI/CD)
 - [docs/FEATURES.md](docs/FEATURES.md) — Feature documentation
 - [docs/ui_ux/brand.md](docs/ui_ux/brand.md) — Brand identity, color palette, typography
