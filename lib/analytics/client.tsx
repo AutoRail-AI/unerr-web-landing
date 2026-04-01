@@ -1,58 +1,54 @@
 "use client"
 
-import { useEffect } from "react"
+import { type ReactNode } from "react"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let posthog: any = null
+// Lazy PostHog initialization — only when keys are set
+let initialized = false
 
-if (typeof window !== "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  posthog = require("posthog-js")
+function initPostHog() {
+  if (initialized) return
+  if (typeof window === "undefined") return
+
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
+  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST
+  if (!key) return
+
+  initialized = true
+
+  import("posthog-js").then(({ default: posthog }) => {
+    posthog.init(key, {
+      api_host: host || "https://us.i.posthog.com",
+      capture_pageview: false,
+      persistence: "memory", // GDPR-friendly, no cookies
+      loaded: (ph) => {
+        ;(window as unknown as Record<string, unknown>)["posthog"] = ph
+      },
+    })
+  })
 }
 
-export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      posthog &&
-      process.env.NEXT_PUBLIC_POSTHOG_KEY &&
-      process.env.NEXT_PUBLIC_POSTHOG_HOST
-    ) {
-      posthog.default.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        loaded: (ph: any) => {
-          if (process.env.NODE_ENV === "development") {
-            ph.debug()
-          }
-        },
-      })
-    }
-  }, [])
-
+export function PostHogProvider({ children }: { children: ReactNode }) {
+  initPostHog()
   return <>{children}</>
 }
 
-// Client-side event tracking
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function trackEvent(event: string, properties?: Record<string, any>) {
-  if (typeof window !== "undefined" && posthog?.default) {
-    posthog.default.capture(event, properties)
-  }
+export function trackEvent(event: string, properties?: Record<string, unknown>) {
+  const ph = (window as unknown as Record<string, unknown>)["posthog"] as
+    | { capture: (event: string, properties?: Record<string, unknown>) => void }
+    | undefined
+  ph?.capture(event, properties)
 }
 
-// Identify user
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function identifyUser(distinctId: string, properties?: Record<string, any>) {
-  if (typeof window !== "undefined" && posthog?.default) {
-    posthog.default.identify(distinctId, properties)
-  }
+export function identifyUser(userId: string, properties?: Record<string, unknown>) {
+  const ph = (window as unknown as Record<string, unknown>)["posthog"] as
+    | { identify: (userId: string, properties?: Record<string, unknown>) => void }
+    | undefined
+  ph?.identify(userId, properties)
 }
 
-// Reset (on logout)
 export function resetPostHog() {
-  if (typeof window !== "undefined" && posthog?.default) {
-    posthog.default.reset()
-  }
+  const ph = (window as unknown as Record<string, unknown>)["posthog"] as
+    | { reset: () => void }
+    | undefined
+  ph?.reset()
 }
-

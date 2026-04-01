@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { organization } from "better-auth/plugins"
-import { Resend } from "resend"
 
 // Lazy import prisma to allow Better Auth CLI to read config without Prisma client
 function getPrisma() {
@@ -16,17 +15,6 @@ function getPrisma() {
 }
 
 const prisma = getPrisma()
-
-// Lazy Resend client
-function getResendClient(): Resend | null {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) return null
-  return new Resend(apiKey)
-}
-
-// Email sender configuration
-const getEmailFrom = () =>
-  process.env.EMAIL_FROM || "unerr <noreply@unerr.dev>"
 
 // Build auth config - conditionally include database adapter
 const authConfig: Parameters<typeof betterAuth>[0] = {
@@ -46,78 +34,16 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
   // Plugins
   plugins: [
     organization({
-      // Configuration options
       allowUserToCreateOrganization: true,
       organizationLimit: parseInt(process.env.ORGANIZATION_LIMIT || "5", 10),
       membershipLimit: parseInt(process.env.MEMBERSHIP_LIMIT || "100", 10),
       creatorRole: "owner",
-      
-      // Invitation email handler
-      async sendInvitationEmail(data) {
-        const resend = getResendClient()
-        if (!resend) {
-          console.warn("Resend not configured, skipping invitation email")
-          console.log("Invitation link:", `${process.env.BETTER_AUTH_URL}/accept-invitation/${data.id}`)
-          return
-        }
 
+      async sendInvitationEmail(data) {
         const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/${data.id}`
-        
-        try {
-          await resend.emails.send({
-            from: getEmailFrom(),
-            to: data.email,
-            subject: `Invitation to join ${data.organization.name}`,
-            html: `
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <meta charset="utf-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Organization Invitation</title>
-                </head>
-                <body style="font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f5;">
-                  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 20px;">
-                    <tr>
-                      <td align="center">
-                        <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                          <tr>
-                            <td style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
-                              <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Organization Invitation</h1>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 40px 32px;">
-                              <h2 style="color: #001320; margin: 0 0 16px 0; font-size: 20px; font-weight: 600;">You've been invited!</h2>
-                              <p style="color: #52525b; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
-                                ${data.inviter.user.name || data.inviter.user.email} invited you to join <strong>${data.organization.name}</strong>.
-                              </p>
-                              <table width="100%" cellpadding="0" cellspacing="0">
-                                <tr>
-                                  <td align="center" style="padding: 16px 0;">
-                                    <a href="${inviteLink}" style="display: inline-block; background-color: #8B5CF6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
-                                      Accept Invitation
-                                    </a>
-                                  </td>
-                                </tr>
-                              </table>
-                              <p style="color: #71717a; margin: 24px 0 0 0; font-size: 14px; line-height: 1.6;">
-                                This invitation will expire in 48 hours.
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </body>
-              </html>
-            `,
-          })
-        } catch (error) {
-          console.error("Failed to send invitation email:", error)
-          throw error
-        }
+        // TODO: integrate email provider when needed
+        console.log(`[auth] Invitation email for ${data.email} to join ${data.organization.name}`)
+        console.log(`[auth] Invitation link: ${inviteLink}`)
       },
     }),
   ],
@@ -125,97 +51,19 @@ const authConfig: Parameters<typeof betterAuth>[0] = {
   // Email & Password authentication
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
     minPasswordLength: 8,
     maxPasswordLength: 128,
   },
 
   // Email verification
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: false,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      const resend = getResendClient()
-      if (!resend) {
-        console.warn("Resend not configured, skipping verification email")
-        console.log("Verification URL:", url)
-        return
-      }
-
-      try {
-        await resend.emails.send({
-          from: getEmailFrom(),
-          to: user.email,
-          subject: "Verify your unerr account",
-          html: `
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Verify your email</title>
-              </head>
-              <body style="font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f5;">
-                <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 20px;">
-                  <tr>
-                    <td align="center">
-                      <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <!-- Header -->
-                        <tr>
-                          <td style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">unerr</h1>
-                          </td>
-                        </tr>
-                        <!-- Content -->
-                        <tr>
-                          <td style="padding: 40px 32px;">
-                            <h2 style="color: #001320; margin: 0 0 16px 0; font-size: 20px; font-weight: 600;">Verify your email address</h2>
-                            <p style="color: #52525b; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
-                              Hi ${user.name || "there"},
-                            </p>
-                            <p style="color: #52525b; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
-                              Thanks for signing up for unerr! Please verify your email address by clicking the button below.
-                            </p>
-                            <table width="100%" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td align="center" style="padding: 16px 0;">
-                                  <a href="${url}" style="display: inline-block; background-color: #8B5CF6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
-                                    Verify Email Address
-                                  </a>
-                                </td>
-                              </tr>
-                            </table>
-                            <p style="color: #71717a; margin: 24px 0 0 0; font-size: 14px; line-height: 1.6;">
-                              If you didn't create an account, you can safely ignore this email.
-                            </p>
-                            <p style="color: #71717a; margin: 16px 0 0 0; font-size: 14px; line-height: 1.6;">
-                              This link will expire in 24 hours.
-                            </p>
-                          </td>
-                        </tr>
-                        <!-- Footer -->
-                        <tr>
-                          <td style="padding: 24px 32px; border-top: 1px solid #e4e4e7; text-align: center;">
-                            <p style="color: #a1a1aa; margin: 0; font-size: 12px;">
-                              &copy; ${new Date().getFullYear()} unerr Inc. All rights reserved.
-                            </p>
-                            <p style="color: #a1a1aa; margin: 8px 0 0 0; font-size: 12px;">
-                              <a href="https://unerr.dev" style="color: #8B5CF6; text-decoration: none;">unerr.dev</a>
-                            </p>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </body>
-            </html>
-          `,
-        })
-      } catch (error) {
-        console.error("Failed to send verification email:", error)
-        throw error
-      }
+      // TODO: integrate email provider when needed
+      console.log(`[auth] Verification email for ${user.email}`)
+      console.log(`[auth] Verification URL: ${url}`)
     },
   },
 

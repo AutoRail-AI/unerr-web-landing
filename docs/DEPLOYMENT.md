@@ -28,7 +28,7 @@ Push to main
 ```
 
 **App name:** `unerr-web`
-**Region:** `iad` (US East — Virginia, colocated with Supabase us-east-1)
+**Region:** `iad` (Virginia — colocated with Supabase us-east-1)
 **URL:** `https://unerr-web.fly.dev`
 
 ## Prerequisites
@@ -57,8 +57,8 @@ Add these in **Settings > Secrets and variables > Actions > Secrets**:
 | Secret | Description | How to get |
 |--------|-------------|------------|
 | `FLY_API_TOKEN` | Fly deploy token | `flyctl tokens create deploy -x 999999h` |
-| `SUPABASE_DB_URL` | PostgreSQL connection string | Supabase dashboard > Settings > Database |
-| `BETTER_AUTH_SECRET` | Auth secret (min 32 chars) | `openssl rand -base64 32` |
+
+> No other build-time secrets are needed. All env vars in `env.mjs` are optional, so `next build` succeeds without them. Real values are injected at runtime via Fly secrets.
 
 ### 4. GitHub Environment
 
@@ -73,17 +73,23 @@ Create a **`production`** environment with required reviewers:
 
 These are injected at runtime (not baked into the Docker image):
 
+### Required
+
 ```bash
 flyctl secrets set \
   SUPABASE_DB_URL="postgresql://..." \
-  BETTER_AUTH_SECRET="your-secret-min-32-chars" \
+  BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
   BETTER_AUTH_URL="https://unerr-web.fly.dev" \
-  NEXT_PUBLIC_APP_URL="https://unerr-web.fly.dev" \
-  NEXT_PUBLIC_UNERR_APP_SERVER="https://app.unerr.dev" \
+  --app unerr-web
+```
+
+### Optional (add when ready)
+
+```bash
+# Google OAuth
+flyctl secrets set \
   GOOGLE_CLIENT_ID="..." \
   GOOGLE_CLIENT_SECRET="..." \
-  AWS_BEARER_TOKEN_BEDROCK="..." \
-  AWS_REGION="us-east-1" \
   --app unerr-web
 ```
 
@@ -92,6 +98,20 @@ To view current secrets:
 ```bash
 flyctl secrets list --app unerr-web
 ```
+
+### What about NEXT_PUBLIC_* vars?
+
+`NEXT_PUBLIC_*` vars are inlined into client JS bundles at build time by Next.js. They're set in `fly.toml` under `[env]` (not Fly secrets) so they're available during `flyctl deploy`:
+
+```toml
+[env]
+  NEXT_PUBLIC_APP_URL = "https://unerr-web.fly.dev"
+  NEXT_PUBLIC_UNERR_APP_SERVER = "https://app.unerr.dev"
+```
+
+### What about Stripe, Redis, PostHog, Sentry, etc.?
+
+Those integrations live in kap10-server (app.unerr.dev), not this landing site. This repo only needs Supabase + Better Auth + optionally Google OAuth.
 
 ## How Deployment Works
 
@@ -130,7 +150,7 @@ The `Dockerfile` uses a 3-stage build:
 
 The final image runs as non-root user `nextjs` on port 3000.
 
-Build-time env vars (`SUPABASE_DB_URL`, `BETTER_AUTH_SECRET`) use safe placeholder defaults so the build succeeds without real credentials. Real values are injected at runtime via Fly secrets.
+No build-time secrets are needed — all env vars in `env.mjs` are marked optional, and Better Auth has a built-in fallback secret for builds.
 
 ## Fly.io Configuration
 
@@ -188,13 +208,13 @@ flyctl deploy --image registry.fly.io/unerr-web:<previous-tag> --app unerr-web
 ## Troubleshooting
 
 **Build fails with env var errors:**
-The Dockerfile provides placeholder defaults for `SUPABASE_DB_URL` and `BETTER_AUTH_SECRET` at build time. If you added a new required env var to `env.mjs`, add a corresponding `ARG`/`ENV` with a placeholder default in the builder stage of the Dockerfile.
+All env vars in `env.mjs` are optional, so the build should succeed without any secrets. If you added a new required env var, make it `.optional()` in `env.mjs` or provide a fallback in the code that reads it.
 
 **Deploy times out:**
 The workflow uses `--wait-timeout 300` (5 minutes). If the app takes longer to start, check logs with `flyctl logs` and increase the timeout if needed.
 
 **Health check failing:**
-The check hits `GET /healthz` which rewrites to `/api/health`. Verify that route returns 200. Check with:
+The check hits `GET /healthz` which rewrites to `/api/health`. It checks the Prisma/Supabase connection. Verify `SUPABASE_DB_URL` is set correctly:
 ```bash
 flyctl ssh console --app unerr-web -C "wget -qO- http://localhost:3000/healthz"
 ```

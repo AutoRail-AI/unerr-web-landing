@@ -16,12 +16,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build-time env vars with safe defaults so `next build` succeeds.
-# Real values are injected at runtime via Fly secrets.
-ARG SUPABASE_DB_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
-ARG BETTER_AUTH_SECRET="build-time-placeholder-secret-min-32-chars-long"
-ENV SUPABASE_DB_URL=$SUPABASE_DB_URL
-ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm build

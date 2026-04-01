@@ -2,71 +2,46 @@ import { PostHog } from "posthog-node"
 
 let posthogServer: PostHog | null = null
 
-export function getPostHogServer(): PostHog | null {
+function getPostHog(): PostHog | null {
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
     return null
   }
 
   if (!posthogServer) {
     posthogServer = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-      host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com",
-      flushAt: 20,
-      flushInterval: 10000,
+      host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+      flushAt: 1,
+      flushInterval: 0,
     })
   }
 
   return posthogServer
 }
 
-// Server-side event tracking
 export async function trackEvent(
-  distinctId: string,
+  userId: string,
   event: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, any>
-): Promise<void> {
-  const client = getPostHogServer()
-  if (!client) return
+  properties?: Record<string, unknown>
+) {
+  const ph = getPostHog()
+  if (!ph) return
 
-  client.capture({
-    distinctId,
+  ph.capture({
+    distinctId: userId,
     event,
-    properties: {
-      ...properties,
-      timestamp: new Date().toISOString(),
-    },
+    properties,
   })
 }
 
-// Identify user
 export async function identifyUser(
-  distinctId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, any>
-): Promise<void> {
-  const client = getPostHogServer()
-  if (!client) return
+  userId: string,
+  properties?: Record<string, unknown>
+) {
+  const ph = getPostHog()
+  if (!ph) return
 
-  client.identify({
-    distinctId,
+  ph.identify({
+    distinctId: userId,
     properties,
   })
 }
-
-// Group identify (for organizations)
-export async function identifyGroup(
-  groupType: string,
-  groupKey: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, any>
-): Promise<void> {
-  const client = getPostHogServer()
-  if (!client) return
-
-  client.groupIdentify({
-    groupType,
-    groupKey,
-    properties,
-  })
-}
-

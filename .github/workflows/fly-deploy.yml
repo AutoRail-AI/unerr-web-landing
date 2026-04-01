@@ -49,9 +49,6 @@ jobs:
             registry.fly.io/unerr-web:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}
-            BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}
 
       - name: Build summary
         run: |
