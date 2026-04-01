@@ -29,7 +29,8 @@ Push to main
 
 **App name:** `unerr-web`
 **Region:** `iad` (Virginia — colocated with Supabase us-east-1)
-**URL:** `https://unerr-web.fly.dev`
+**Default URL:** `https://unerr-web.fly.dev`
+**Custom domain:** `https://unerr.dev`
 
 ## Prerequisites
 
@@ -144,9 +145,9 @@ The `Dockerfile` uses a 3-stage build:
 
 | Stage | Base | Purpose |
 |-------|------|---------|
-| `deps` | `node:22-alpine` | Install dependencies with `pnpm install --frozen-lockfile` |
-| `builder` | `node:22-alpine` | Copy source, run `pnpm build` (Next.js standalone output) |
-| `runner` | `node:22-alpine` | Minimal image — only `.next/standalone`, `.next/static`, `public` |
+| `deps` | `node:22-bookworm-slim` | Install dependencies with `pnpm install --frozen-lockfile` |
+| `builder` | `node:22-bookworm-slim` | Prisma generate + `pnpm build` (Next.js standalone output) |
+| `runner` | `node:22-bookworm-slim` | Minimal — `.next/standalone`, `.next/static`, `public`, Prisma CLI for migrations |
 
 The final image runs as non-root user `nextjs` on port 3000.
 
@@ -165,6 +166,93 @@ Defined in `fly.toml`:
 | Health check | `GET /healthz` every 30s |
 | Concurrency | 200 soft / 250 hard limit |
 | HTTPS | Forced (HTTP redirects to HTTPS) |
+
+## Custom Domain (Cloudflare)
+
+The landing page is served at `unerr.dev` via Cloudflare DNS pointing to Fly.io.
+
+### 1. Create a TLS certificate on Fly
+
+```bash
+flyctl certs create unerr.dev --app unerr-web
+```
+
+### 2. Get the Fly IP address / CNAME
+
+```bash
+flyctl ips list --app unerr-web
+```
+
+This returns the app's dedicated IPv4 and IPv6 addresses:
+
+```
+VERSION  IP                  TYPE    REGION  CREATED AT
+v4       66.241.124.XX       public  global  ...
+v6       2a09:8280:1::XX:XX  public  global  ...
+```
+
+If you don't have a dedicated IPv4, allocate one:
+
+```bash
+flyctl ips allocate-v4 --app unerr-web
+flyctl ips allocate-v6 --app unerr-web
+```
+
+### 3. Add DNS records in Cloudflare
+
+Go to **Cloudflare Dashboard → unerr.dev → DNS → Records** and add:
+
+| Type | Name | Content | Proxy | TTL |
+|------|------|---------|-------|-----|
+| `A` | `@` | `66.241.124.XX` (your Fly IPv4) | DNS only (grey cloud) | Auto |
+| `AAAA` | `@` | `2a09:8280:1::XX:XX` (your Fly IPv6) | DNS only (grey cloud) | Auto |
+
+**Important:** Set proxy to **DNS only** (grey cloud icon), not "Proxied" (orange cloud). Fly handles TLS termination — Cloudflare proxying would cause certificate conflicts.
+
+If you also want `www.unerr.dev`:
+
+| Type | Name | Content | Proxy | TTL |
+|------|------|---------|-------|-----|
+| `CNAME` | `www` | `unerr.dev` | DNS only | Auto |
+
+Then add the www cert on Fly:
+
+```bash
+flyctl certs create www.unerr.dev --app unerr-web
+```
+
+### 4. Verify the certificate
+
+```bash
+flyctl certs show unerr.dev --app unerr-web
+```
+
+Wait for the status to show `Ready`. This usually takes 1–5 minutes. Fly auto-provisions a Let's Encrypt certificate.
+
+### 5. Verify it works
+
+```bash
+curl -I https://unerr.dev
+# Should return HTTP/2 200 with Fly headers
+```
+
+### 6. Cloudflare SSL/TLS settings
+
+In Cloudflare Dashboard → SSL/TLS:
+
+- **Encryption mode:** Full (strict) — if using DNS only (grey cloud), this doesn't matter since Cloudflare isn't proxying. But set it anyway for safety.
+- **Always Use HTTPS:** On
+- **Automatic HTTPS Rewrites:** On
+
+### Summary
+
+```
+User → unerr.dev
+  → Cloudflare DNS (A record, DNS only)
+    → Fly.io edge (iad)
+      → TLS termination (Let's Encrypt cert)
+        → unerr-web container (port 3000)
+```
 
 ## Scaling
 

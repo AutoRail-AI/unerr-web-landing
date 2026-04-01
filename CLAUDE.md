@@ -22,18 +22,19 @@ pnpm test -- path/to/file   # Run a single test file
 pnpm test:watch             # Watch mode
 pnpm test:coverage          # With coverage
 pnpm e2e:headless           # Playwright E2E tests
-pnpm worker                 # Start BullMQ workers
 pnpm storybook              # Start Storybook on port 6006
-docker compose up           # Start app + worker + redis
 ```
 
 ## Architecture
 
 ### Route Groups
 - `app/(marketing)/` — Landing page, pricing, OSS, legal pages. Always dark theme (Substrate Dark). Has its own layout with SiteHeader, SiteFooter, ScrollProgressBar.
-- `app/(auth)/` — Login, register, verify-email. Split layout with branded left panel.
+- `app/(auth)/` — Login, register, verify-email. Admin-only — not user-facing. All public CTAs go to the waitlist dialog.
 - `app/(admin)/` — Admin controls for the main app.
-- `app/api/` — API routes (auth, health, billing webhooks, etc.).
+- `app/api/` — API routes (auth, health, waitlist).
+
+### MVP Waitlist Flow
+All user-facing CTAs (pricing, OSS, hero) open the **waitlist dialog** (`components/marketing/waitlist-dialog.tsx`) which persists to Supabase via `/api/waitlist`. No public login/register. Auth pages exist only for admin use.
 
 ### Design System (Shared with kap10-server)
 - **Aesthetic**: Substrate Dark + Paper Light. No glassmorphism, no backdrop-filter.
@@ -46,13 +47,23 @@ docker compose up           # Start app + worker + redis
 All marketing components use Framer Motion + GSAP for animations. They respect `prefers-reduced-motion`. Key components:
 - `site-header.tsx` — Sticky header with scroll-triggered glass effect
 - `hero-section.tsx` / `hero-animation.tsx` — GSAP word reveal + product preview
+- `hero-product-preview.tsx` — Interactive app preview (orchestrator, imports from `preview/`)
+- `preview/nav-rail.tsx` — NavRail sidebar (Phase 19: 9 tabs, 3 cognitive groups, `bg-sidebar` tokens)
+- `preview/focus-bar.tsx` — FocusBar breadcrumb (Phase 19: `h-8`, `bg-background/80 backdrop-blur-sm`)
+- `preview/overview-view.tsx` — Overview tab (Phase 20: HealthPulseStrip, GradeRing, 6-card grid)
+- `preview/issues-view.tsx` — Issues tab (Phase 20: Linear-style, 44px rows, detail panel)
+- `preview/docs-view.tsx` — Atlas tab (Phase 18.5: 3-column, NavTree + Content + ContextPanel)
+- `tracked-section.tsx` — PostHog section visibility tracking wrapper
+- `waitlist-dialog.tsx` — Waitlist modal with general/OSS plan toggle
 - `bento-grid.tsx` — 6-card feature grid with hover animations
 - `metrics-bar.tsx` — Animated number tickers
 - `problem-section.tsx` — Before/after comparison with scroll-triggered entrance
 - `how-it-works.tsx` — 3-step tutorial with pinned terminal
 - `pricing-preview.tsx` — OSS + Pro pricing cards
+- `pricing/pricing-cards.tsx` — Full pricing page (6 tiers from product docs)
+- `pricing/comparison-table.tsx` — Feature comparison table (6 tiers)
 - `final-cta.tsx` — Closing CTA with animated grid pattern
-- `shimmer-button.tsx` — Primary CTA button with shimmer effect
+- `shimmer-button.tsx` — Primary CTA button with shimmer effect (supports `href` or `onClick`)
 
 ### Magic UI Components (`components/ui/magic/`)
 Reusable animated components: `border-beam`, `magic-card`, `number-ticker`, `animated-grid`, `dot-pattern`, `ripple`, `spotlight`.
@@ -65,15 +76,43 @@ Both this repo and kap10-server share a **single Supabase PostgreSQL database** 
 - Same `SUPABASE_DB_URL`, different schemas, zero conflicts.
 - **Prisma** (`lib/db/prisma.ts`): All models use `@@schema("landing")`. Connects to Supabase PostgreSQL.
 - **Migrations**: `prisma/migrations/` committed to git. `prisma migrate deploy` runs as Fly.io release command on every deploy.
-- No MongoDB/Mongoose, no Redis, no BullMQ — this repo is intentionally lightweight.
+- No MongoDB/Mongoose, no Redis, no BullMQ, no Stripe, no Sentry, no OpenAI — this repo is intentionally lightweight.
 
 ### Auth Flow
 - Better Auth configured in `lib/auth/`. Protected routes in `proxy.ts`.
 - `proxy.ts` (NOT `middleware.ts`) — Next.js 16 route protection.
 - Auth on this site is for **admin users only** (internal team). Platform user auth lives in kap10-server.
+- All public user CTAs open the waitlist dialog, not login/register.
+
+### Analytics (PostHog)
+- Initialized in `instrumentation-client.ts` (Next.js 15.3+ pattern).
+- Reverse-proxied via `/ingest` (configured in `next.config.ts` rewrites).
+- Cookieless: `persistence: "memory"` — no cookies, GDPR-friendly.
+- Event definitions: `lib/analytics/events.ts`
+- React hooks: `lib/analytics/hooks.ts` (useTrackPageTime, useTrackScrollDepth, useTrackSectionView)
+- Section tracking: `components/marketing/tracked-section.tsx` wraps landing page sections.
+- Key events: `section_viewed`, `page_scroll_depth`, `page_time_spent`, `pricing_cta_clicked`, `preview_tab_changed`, `waitlist_dialog_opened`, `waitlist_form_submitted`.
+
+### Deployment
+- **Fly.io** (`fly.toml`): app `unerr-web`, region `iad`, `node:22-bookworm-slim` Docker image.
+- **CI/CD**: Single workflow `.github/workflows/ci.yml` — test → build → manual approval → deploy.
+- **Custom domain**: `unerr.dev` via Cloudflare DNS (A/AAAA records, DNS only) → Fly.io TLS.
+- **Migrations**: `release_command` in `fly.toml` runs `prisma migrate deploy` before each deploy.
+- **Public env vars**: Set in `fly.toml` `[env]` (NEXT_PUBLIC_APP_URL, PostHog key, Supabase URL).
+- **Secrets**: Set via `flyctl secrets set` (SUPABASE_DB_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL).
+
+### Pricing (MVP)
+6 tiers defined in `components/marketing/pricing/pricing-cards.tsx`:
+- Free Trial ($0/7 days), OSS Guardian ($0 forever), Pro ($20/mo), Pro+ ($35/mo), Startup ($30/seat/mo), Enterprise (custom).
+- All CTAs open the waitlist dialog — no direct checkout.
+- Pricing strategy: "Insights free, actions paid" — see `docs/product/FIRST_WEEK_WOW.md`.
+- Flat-rate, no credits, no usage-based pricing.
 
 ### Environment Variables
-Validated via T3 Env (`env.mjs`) with Zod schemas. Add new env vars there.
+Validated via T3 Env (`env.mjs`) with Zod schemas. All vars are `.optional()` so builds succeed without secrets. Required at runtime:
+- `SUPABASE_DB_URL` — PostgreSQL connection string
+- `BETTER_AUTH_SECRET` — session signing (min 32 chars)
+- `BETTER_AUTH_URL` — auth redirect base URL
 
 ### Imports
 Absolute imports via `@/*` mapping to project root.
@@ -140,46 +179,38 @@ const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ||
 ```
 
 ### 9. Lazy Initialization
-Third-party clients (Stripe, Redis, etc.) must not initialize at module load time. Use null singleton + getter function + Proxy export pattern.
-```typescript
-let stripeInstance: Stripe | null = null
-function getStripe(): Stripe {
-  if (!stripeInstance) {
-    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-02-24.acacia" })
-  }
-  return stripeInstance
-}
-export const stripe = new Proxy({} as Stripe, {
-  get(_target, prop) { return getStripe()[prop as keyof Stripe] },
-})
-```
+Third-party clients must not initialize at module load time. Use null singleton + getter function pattern.
 
-### 10. Stripe API Version
-Always use `"2025-02-24.acacia"`.
-
-### 11. Reduce Function Type Annotations
+### 10. Reduce Function Type Annotations
 Always type reduce callback parameters explicitly.
 ```typescript
 const total = items.reduce((sum: number, item: any) => sum + item.value, 0)
 ```
 
-### 12. BullMQ Queue Types
-Use `as any` type assertions for Redis connection params in Queue/Worker constructors.
-
-### 13. Missing Type Declarations
+### 11. Missing Type Declarations
 Create `.d.ts` files for libraries without TypeScript types.
 
-### 14. Design Tokens
+### 12. Design Tokens
 Never use raw hex colors. Use semantic tokens: `bg-background`, `text-foreground`, `text-accent`, etc.
 
-### 15. Marketing Animations
+### 13. Marketing Animations
 Always respect `prefers-reduced-motion` via Framer Motion's `useReducedMotion()` or `window.matchMedia("(prefers-reduced-motion: reduce)")`.
+
+### 14. CTA Links
+All public-facing CTAs must use the waitlist dialog (`useWaitlist().open()`), never `href="/login"` or `href="/register"`. Admin auth pages exist but are not linked from marketing pages.
+
+### 15. PostHog Events
+Use helpers from `lib/analytics/events.ts`. Track CTA clicks with `trackCtaClick()`, section visibility with `TrackedSection` wrapper, pricing with `trackPricingCtaClick()`. Never import `posthog` directly in components — use the centralized helpers.
 
 ## Documentation
 
+- [docs/DATABASE_ARCHITECTURE.md](docs/DATABASE_ARCHITECTURE.md) — Database schema isolation, auth separation, migrations
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deployment guide (Fly.io, Docker, CI/CD, Cloudflare custom domain)
+- [docs/FEATURES.md](docs/FEATURES.md) — Feature documentation
+- [docs/product/](docs/product/) — Product strategy, pricing, growth playbooks
 - [docs/ui_ux/brand.md](docs/ui_ux/brand.md) — Brand identity, color palette, typography
 - [docs/ui_ux/UI_UX_GUIDE.md](docs/ui_ux/UI_UX_GUIDE.md) — Complete design system reference
 - [docs/ui_ux/LANDING_PAGE_BLUEPRINT.md](docs/ui_ux/LANDING_PAGE_BLUEPRINT.md) — Landing page specs and section designs
 - [docs/ui_ux/DESIGN_SYSTEM_OVERHAUL.md](docs/ui_ux/DESIGN_SYSTEM_OVERHAUL.md) — Design decisions and migration plan
-- [ARCHITECTURE.md](ARCHITECTURE.md) — Database architecture, multi-tenancy, billing, system design
-- [README.md](README.md) — Setup guide, environment variables, Docker
+- [ARCHITECTURE.md](ARCHITECTURE.md) — System architecture
+- [README.md](README.md) — Setup guide, environment variables, deployment

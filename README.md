@@ -10,14 +10,16 @@ Landing page and marketing site for the [unerr](https://unerr.dev) platform — 
 | Runtime | React 19, TypeScript (strict mode) |
 | Styling | Tailwind CSS v4, CVA + tailwind-merge |
 | Components | shadcn/ui, Framer Motion, GSAP |
-| Auth | Better Auth (email/password + Google OAuth) |
+| Auth | Better Auth (admin-only, email/password + Google OAuth) |
 | Database | Supabase PostgreSQL via Prisma (`landing` schema) |
+| Analytics | PostHog (cookieless, reverse-proxied via `/ingest`) |
 | Deployment | Fly.io (Docker, `iad` region) |
-| CI/CD | GitHub Actions (Blacksmith runners) |
+| CI/CD | GitHub Actions (Blacksmith runners) — single `ci.yml` workflow |
+| Domain | `unerr.dev` via Cloudflare DNS → Fly.io |
 | Testing | Vitest + Playwright |
 | Fonts | Space Grotesk (headings), Inter (body), JetBrains Mono (code) |
 
-> Billing, analytics, error tracking, email, AI agents, and job queues are handled by the main app at `app.unerr.dev` (kap10-server). This repo is intentionally lightweight — marketing pages + auth + waitlist.
+> Billing, error tracking, email, AI agents, and job queues are handled by the main app at `app.unerr.dev` (kap10-server). This repo is intentionally lightweight — marketing pages + waitlist + admin auth.
 
 ## Quick Start
 
@@ -33,7 +35,7 @@ pnpm dev                      # http://localhost:3000
 
 - Node.js >= 20
 - pnpm (via Corepack)
-- Supabase project (PostgreSQL)
+- Supabase project (PostgreSQL, us-east-1)
 
 ## Environment Variables
 
@@ -54,9 +56,11 @@ GOOGLE_CLIENT_ID=...                      # Google OAuth
 GOOGLE_CLIENT_SECRET=...
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_UNERR_APP_SERVER=http://localhost:3001
+NEXT_PUBLIC_POSTHOG_KEY=phc_...           # PostHog analytics
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-That's it. No Stripe, Redis, PostHog, Sentry, OpenAI, or Resend keys needed — those integrations live in kap10-server.
+No Stripe, Redis, Sentry, OpenAI, or Resend keys needed — those live in kap10-server.
 
 ## Project Structure
 
@@ -64,10 +68,10 @@ That's it. No Stripe, Redis, PostHog, Sentry, OpenAI, or Resend keys needed — 
 app/
 ├── (marketing)/          # Landing, pricing, OSS, legal pages (dark theme)
 │   ├── page.tsx          # Home / landing page
-│   ├── pricing/          # Pricing page
+│   ├── pricing/          # Pricing page (6 tiers from product docs)
 │   ├── oss/              # OSS Guardian page
 │   └── legal/            # Privacy policy, terms of service
-├── (auth)/               # Login, register, verify-email
+├── (auth)/               # Login, register (admin-only, not user-facing)
 ├── (admin)/              # Admin controls for main app
 └── api/                  # API routes (auth, health, waitlist)
 
@@ -75,74 +79,75 @@ components/
 ├── marketing/            # Landing page sections
 │   ├── hero-section.tsx          # GSAP word reveal + product preview
 │   ├── hero-product-preview.tsx  # Interactive app preview (orchestrator)
-│   ├── preview/                  # Split preview components
-│   │   ├── nav-rail.tsx          # NavRail (mirrors real product)
+│   ├── preview/                  # Split preview components (Phase 19/20 spec)
+│   │   ├── nav-rail.tsx          # NavRail (9 tabs, 3 groups)
 │   │   ├── focus-bar.tsx         # FocusBar breadcrumb
-│   │   ├── overview-view.tsx     # Overview tab
-│   │   ├── issues-view.tsx       # Issues tab (Linear-style)
-│   │   └── docs-view.tsx         # Atlas/Docs tab (3-column)
-│   ├── bento-grid.tsx            # Feature grid with hover animations
-│   ├── metrics-bar.tsx           # Animated number tickers
-│   ├── problem-section.tsx       # Before/after comparison
-│   ├── how-it-works.tsx          # 3-step tutorial
-│   ├── pricing-preview.tsx       # OSS + Pro pricing cards
-│   ├── oss/                      # OSS Guardian components
-│   └── pricing/                  # Pricing page components
+│   │   ├── overview-view.tsx     # Overview tab (HealthPulseStrip + cards)
+│   │   ├── issues-view.tsx       # Issues tab (Linear-style, 44px rows)
+│   │   └── docs-view.tsx         # Atlas tab (3-column layout)
+│   ├── tracked-section.tsx       # PostHog section visibility tracking
+│   ├── waitlist-dialog.tsx       # Waitlist modal (all CTAs funnel here)
+│   ├── pricing/                  # Pricing page components
+│   └── oss/                      # OSS Guardian components
 ├── ui/                   # shadcn/ui components
 │   └── magic/            # Animated components (border-beam, ripple, etc.)
 └── onboarding/           # Onboarding flow
 
 lib/
-├── auth/                 # Better Auth config
+├── analytics/            # PostHog client + server + events + hooks
+├── auth/                 # Better Auth config (admin-only)
 ├── db/prisma.ts          # Prisma client (landing schema)
 └── types/                # TypeScript types
 
 prisma/
-└── schema.prisma         # Prisma schema (multiSchema: "landing")
-
-styles/
-└── tailwind.css          # Design tokens
+├── schema.prisma         # Prisma schema (multiSchema: "landing")
+└── migrations/           # Prisma Migrate files (committed to git)
 ```
 
 ## Database & Auth Architecture
 
-Both this landing site and the main app (kap10-server) share a **single Supabase PostgreSQL database** (us-east-1) but are fully isolated via PostgreSQL schema separation:
+Both this landing site and the main app (kap10-server) share a **single Supabase PostgreSQL database** (us-east-1) with schema-level isolation:
 
 | App | Postgres Schema | Auth Users | Purpose |
 |-----|----------------|------------|---------|
-| **kap10-server** | `public` + `unerr` | Platform users (developers) | Main product — code intelligence |
-| **unerr-web-landing** | `landing` | Admin users (internal team) | Marketing site + admin dashboard |
+| **kap10-server** | `public` + `unerr` | Platform users (developers) | Main product |
+| **unerr-web-landing** | `landing` | Admin users (internal team) | Marketing + waitlist |
 
-### How isolation works
+Each app has its own `BETTER_AUTH_SECRET` — sessions are not interchangeable. Same `SUPABASE_DB_URL`, different schemas, zero conflicts.
 
-- **kap10-server** uses `pg` Pool with `search_path=public`, so Better Auth creates `public.user`, `public.session`, etc.
-- **unerr-web-landing** uses Prisma with `multiSchema` preview feature. Every model has `@@schema("landing")`, so Better Auth creates `landing.user`, `landing.session`, etc.
-- Each app has its own `BETTER_AUTH_SECRET` — session cookies are not interchangeable between apps.
-- Same `SUPABASE_DB_URL` connection string, different schemas, zero table conflicts.
+See [docs/DATABASE_ARCHITECTURE.md](docs/DATABASE_ARCHITECTURE.md) for full details.
 
 ### Migrations
 
-Migrations are managed via Prisma Migrate. On Fly.io deploys, `prisma migrate deploy` runs automatically as a release command.
-
 ```bash
-# Development: create a new migration
-pnpm prisma migrate dev --name describe_the_change
-
-# Production: applied automatically via fly.toml release_command
-# Manual: pnpm prisma migrate deploy
+pnpm prisma migrate dev --name describe_the_change   # development
+# Production: runs automatically via fly.toml release_command
 ```
 
-Migration files live in `prisma/migrations/` and must be committed to git.
+## Analytics (PostHog)
 
-## Design System
+PostHog is initialized via `instrumentation-client.ts` and reverse-proxied through `/ingest` (configured in `next.config.ts`). Cookieless, GDPR-friendly (`persistence: "memory"`).
 
-Shared with kap10-server. Substrate Dark aesthetic.
+### Events tracked
 
-- **Color budget:** 90% neutral, 10% purposeful
-- **Accent:** Violet (`#8B5CF6`) — sole accent color
-- **Cyan:** `#22D3EE` — functional only (live data indicators)
-- **Tokens:** Semantic only (`bg-background`, `text-foreground`, `text-accent`) — never raw hex
-- **Marketing utilities:** `text-gradient`, `text-lit`, `bg-accent-fade`, `glass-card`
+| Event | Trigger |
+|-------|---------|
+| `page_time_spent` | Page unmount / tab switch |
+| `page_scroll_depth` | 25/50/75/100% milestones |
+| `section_viewed` | Section enters viewport (hero, metrics, problem, how-it-works, features, pricing, cta) |
+| `pricing_cta_clicked` | Pricing tier button click |
+| `pricing_billing_toggled` | Monthly/annual toggle |
+| `preview_tab_changed` | Hero preview tab switch |
+| `preview_repo_selected` | Hero preview repo dropdown |
+| `waitlist_dialog_opened` | Waitlist modal opens |
+| `waitlist_form_submitted` | Waitlist form submitted |
+| `waitlist_joined` | Server-side DB insert |
+
+## Pricing (MVP)
+
+All CTAs funnel to the **waitlist dialog** — no direct login/register for public users.
+
+6 tiers from product docs: Free Trial, OSS Guardian ($0 forever), Pro ($20/mo), Pro+ ($35/mo), Startup ($30/seat/mo), Enterprise (custom). See `docs/product/REVENUE_PROJECTIONS.md` for full pricing strategy.
 
 ## Commands
 
@@ -152,26 +157,23 @@ pnpm build              # Production build
 pnpm start              # Start production server
 pnpm lint               # ESLint
 pnpm lint:fix           # ESLint with auto-fix
-pnpm prettier           # Check formatting
-pnpm prettier:fix       # Fix formatting
 pnpm test               # Vitest
 pnpm test:watch         # Watch mode
-pnpm test:coverage      # With coverage
-pnpm e2e:headless       # Playwright E2E tests
 pnpm storybook          # Storybook on port 6006
 ```
 
 ## Deployment
 
-Deployed to **Fly.io** via GitHub Actions with manual deploy approval.
+Deployed to **Fly.io** via a single GitHub Actions workflow (`ci.yml`):
 
 ```
-Push to main → Build Docker image → Manual approval → Deploy to Fly.io
+Push to main → Test (lint + typecheck + tests) → Build Docker image → Manual approval → Deploy
 ```
 
 - **App:** `unerr-web`
 - **Region:** `iad` (Virginia — colocated with Supabase us-east-1)
-- **URL:** `https://unerr-web.fly.dev`
+- **Domain:** `unerr.dev` (Cloudflare DNS → Fly.io)
+- **Docker base:** `node:22-bookworm-slim` (3-stage build)
 
 ### Fly secrets (runtime)
 
@@ -179,21 +181,19 @@ Push to main → Build Docker image → Manual approval → Deploy to Fly.io
 flyctl secrets set \
   SUPABASE_DB_URL="postgresql://..." \
   BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
-  BETTER_AUTH_URL="https://unerr-web.fly.dev" \
+  BETTER_AUTH_URL="https://unerr.dev" \
   --app unerr-web
 ```
 
-Add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` when ready to enable Google sign-in.
-
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full setup guide.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full setup including custom domain + Cloudflare config.
 
 ## Documentation
 
 - [docs/DATABASE_ARCHITECTURE.md](docs/DATABASE_ARCHITECTURE.md) — Database schema isolation, auth separation, migrations
-- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deployment guide (Fly.io, Docker, CI/CD)
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — Deployment guide (Fly.io, Docker, CI/CD, Cloudflare custom domain)
 - [docs/FEATURES.md](docs/FEATURES.md) — Feature documentation
+- [docs/product/](docs/product/) — Product strategy, pricing, growth playbooks
 - [docs/ui_ux/brand.md](docs/ui_ux/brand.md) — Brand identity, color palette, typography
 - [docs/ui_ux/UI_UX_GUIDE.md](docs/ui_ux/UI_UX_GUIDE.md) — Design system reference
 - [docs/ui_ux/LANDING_PAGE_BLUEPRINT.md](docs/ui_ux/LANDING_PAGE_BLUEPRINT.md) — Landing page specs
-- [ARCHITECTURE.md](ARCHITECTURE.md) — System architecture
 - [CLAUDE.md](CLAUDE.md) — AI coding assistant instructions
